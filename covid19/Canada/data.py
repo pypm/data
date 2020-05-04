@@ -116,7 +116,7 @@ def get_data_description():
             if population == 'reported':
                 header = regional_abbreviations[region]+' C'
             if population == 'deaths':
-                header = regional_abbreviations[region]+'C.1'
+                header = regional_abbreviations[region]+' C.1'
             pop_data_total['header'] = header
 
             population_data = {'daily': pop_data_daily, 'total': pop_data_total}
@@ -129,10 +129,11 @@ def get_data_description():
             pop_data_total = {}
             pop_data_total['filename'] = filename
             header = ''
-            if population == 'in_hospital':
-                header = regional_abbreviations[region]+'H'
-            if population == 'in_icu':
-                header = regional_abbreviations[region]+'I'
+            if regional_abbreviations[region] not in ['PE','YT','NT','NU']:
+                if population == 'in_hospital':
+                    header = regional_abbreviations[region]+'H'
+                if population == 'in_icu':
+                    header = regional_abbreviations[region]+'I'
             pop_data_total['header'] = header
 
             population_data = {'total': pop_data_total}
