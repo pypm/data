@@ -38,8 +38,6 @@ with open('usa.csv') as f:
         else:
             date = cols[0]
             state = cols[1]
-            if date == '20200308' and state == 'TN':
-                jjj=1
             if date != last_date and last_date !=0:
                 dict_by_date[last_date] = dict_by_state
                 date_list.append(last_date)
@@ -51,6 +49,10 @@ with open('usa.csv') as f:
             dict_by_state[state] = dict_by_datum
             last_date = date
         i+=1
+
+if len(dict_by_state)>0:
+    dict_by_date[last_date] = dict_by_state
+    date_list.append(last_date)
 
 datums = []
 for key in col_d:
@@ -72,8 +74,6 @@ with open('usa-pypm.csv', 'w') as the_file:
             dict_by_state = dict_by_date[date]
             buff = [date]
             for state in states:
-                if date == '20200308' and state == 'TN':
-                    jjj=1
                 dict_by_datum = None
                 if state in dict_by_state:
                     dict_by_datum = dict_by_state[state]
