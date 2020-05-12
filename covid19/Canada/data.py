@@ -6,7 +6,7 @@ Example of data description file: data.py
 """
 
 def get_data_description():
-    """ Define data provided by US covidtracking.com
+    """ Define data provided by Esri Canada
     """
     data = {}
     data['nation'] = 'Canada'
