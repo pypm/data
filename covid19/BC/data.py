@@ -65,4 +65,3 @@ def get_data_description():
 
     return data
 
-get_data_description()

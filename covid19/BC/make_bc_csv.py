@@ -10,7 +10,7 @@ last_date = datetime.date(2000, 1, 1)
 
 dict_by_category = {}
 ha_categories = []
-fixed_categories = ['total', 'Male', 'Female']
+fixed_categories = ['All', 'Male', 'Female']
 age_categories = []
 cumul_by_category = {}
 
