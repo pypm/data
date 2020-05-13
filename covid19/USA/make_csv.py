@@ -26,7 +26,7 @@ col_d = {}
 dict_by_date = {}
 dict_by_state = {}
 date_list = []
-with open('usa.csv') as f:
+with open('daily.csv') as f:
     for line in f:
         cols = line.split(',')
         if i == 0:
