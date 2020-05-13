@@ -28,7 +28,7 @@ dict_by_prov = {}
 date_list = []
 with open('Provincial_Daily_Totals.csv') as f:
     for line in f:
-        cols = line.split(',')
+        cols = line.strip().split(',')
         if i == 0:
             j=0
             for col in cols:
@@ -36,10 +36,12 @@ with open('Provincial_Daily_Totals.csv') as f:
                     col_d[j]=d_d[col][0]
                 j+=1
         else:
-            prov = cols[2]
+            prov = cols[3]
             if prov in provs:
-                date_ms = int(cols[4])
-                date = datetime.datetime.fromtimestamp(date_ms/1000.0).date()
+                dt = cols[0].split(' ')
+                dd = dt[0].split('/')
+                date = datetime.date(int(dd[0]),int(dd[1]),int(dd[2]))
+                # date = datetime.datetime.fromtimestamp(date_ms/1000.0).date()
                 if date != last_date and last_date != datetime.date(2000,1,1):
                     dict_by_date[last_date] = dict_by_prov
                     date_list.append(last_date)
