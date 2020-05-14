@@ -10,9 +10,7 @@ d_d={'TotalCases':['pt'],
 'TotalDeaths':['dt'],
 'DailyDeaths':['dd'],
 'TotalHospitalized':['ht'],
-'DailyHospitalized':['hd'],
-'TotalICU':['it'],
-'DailyICU':['id']
+'TotalICU':['it']
 }
 
 col_d ={}
