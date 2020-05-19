@@ -80,7 +80,7 @@ with open('bc-pypm.csv', 'w') as the_file:
             hbuff.append(category + '-' + dat)
     the_file.write(','.join(hbuff) + '\n')
 
-    ndays = (last_date - start_date).days
+    ndays = (last_date - start_date).days + 1
     for i in range(ndays):
         date = start_date + datetime.timedelta(days=i)
         buff = [str(date)]
