@@ -81,9 +81,9 @@ with open('Provincial_Daily_Totals.csv') as f:
                     col_d[j] = d_d[col][0]
                 j += 1
         else:
-            prov = cols[3]
+            prov = cols[2]
             if prov in provs:
-                dt = cols[0].split(' ')
+                dt = cols[4].split(' ')
                 dd = dt[0].split('/')
                 date = datetime.date(int(dd[0]), int(dd[1]), int(dd[2]))
                 # date = datetime.datetime.fromtimestamp(date_ms/1000.0).date()
