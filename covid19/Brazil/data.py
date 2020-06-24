@@ -17,6 +17,9 @@ def get_data_description():
 
     # common regional abbreviations used in the data files
     regional_abbreviations = {
+        'AC: Acre': 'AC',
+        'AL: Alagoas': 'AL',
+        'AP: Amapá': 'AP',
         'AM: Amazonas': 'AM',
         'BA: Bahia': 'BA',
         'CE: Ceará': 'CE',
