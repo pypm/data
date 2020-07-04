@@ -29,8 +29,8 @@ with open('cases-brazil-states.csv') as f:
                     col_d[j]=d_d[col][0]
                 j+=1
         else:
-            date = cols[0]
-            state = cols[2]
+            date = cols[1]
+            state = cols[3]
             if date != last_date and last_date !=0:
                 dict_by_date[last_date] = dict_by_state
                 date_list.append(last_date)
