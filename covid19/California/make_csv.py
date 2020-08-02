@@ -2,6 +2,10 @@
 """
 Convert California case/death by age data
 
+Note: after running this, must fix the .pypm file: remove duplicate entry for May 17:
+and add missing fields for that date:
+3330 0 40500 188
+
 @author: karlen
 """
 
@@ -30,6 +34,8 @@ with open('case_demographics_age.csv') as f:
         else:
             date = cols[2]
             state = cols[0]
+            if state == '65 and Older':
+                state = '65+'
             if date != last_date and last_date != 0:
                 dict_by_date[last_date] = dict_by_state
                 date_list.append(last_date)
