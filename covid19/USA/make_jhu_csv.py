@@ -97,7 +97,7 @@ with open('time_series_covid19_deaths_US.csv') as f:
             state_name = cols[6]
             if state_name in regional_abbreviations:
                 state = regional_abbreviations[state_name]
-                sdata = groups[2].split(',')[40:]
+                sdata = groups[2].split(',')[41:]
                 data = [int(s) for s in sdata]
                 if state not in dt_by_state:
                     dt_by_state[state] = np.array(data)
