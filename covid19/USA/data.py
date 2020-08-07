@@ -6,13 +6,13 @@ Example of data description file: data.py
 """
 
 def get_data_description():
-    """ Define data provided by US covidtracking.com
+    """ Define data provided by US covidtracking.com and JHU
     """
     data = {}
     data['nation'] = 'USA'
     data['description'] = 'US by state'
-    data['source'] = 'Covid tracking US'
-    data['source_url'] = 'https://covidtracking.com'
+    data['source'] = 'Covid tracking US and JHU CSSE'
+    data['source_url'] = 'https://covidtracking.com and https://github.com/CSSEGISandData/COVID-19'
 
     # common regional abbreviations used in the data files
     regional_abbreviations = {
@@ -75,10 +75,12 @@ def get_data_description():
         }
 
     files_data = {}
-    filenames = ['usa-pypm.csv']
+    filenames = ['usa-pypm.csv','usa-jhu-pypm.csv']
     for filename in filenames:
         file_data = {}
-        file_data['source'] = 'More detailed information if folder has multiple sources'
+        file_data['source'] = 'covidtracking.com'
+        if filename == 'usa-jhu-pypm.csv':
+            file_data['source'] = 'JHU CSSE'
         file_data['date header'] = 'Date'
         file_data['date start'] = [2020, 3, 1]
 
@@ -89,13 +91,15 @@ def get_data_description():
     #either daily or total (or both) data can be provided
 
     regions_data = {}
+    f0_populations = ['hospitalized', 'in_hospital',
+                      'icu admissions', 'in_icu',
+                      'ventilated', 'on_ventilator']
+    f1_populations = ['reported', 'deaths']
+
     for region in regional_abbreviations:
 
         populations_data = {}
-        f0_populations = ['reported', 'deaths', 
-                          'hospitalized', 'in_hospital',
-                          'icu admissions', 'in_icu',
-                          'ventilated', 'on_ventilator']
+
         filename = filenames[0]
         for population in f0_populations:
             pop_data_total = {}
@@ -117,6 +121,21 @@ def get_data_description():
                 header = regional_abbreviations[region]+'-vt'
             if population == 'on_ventilator':
                 header = regional_abbreviations[region]+'-vc'
+
+            pop_data_total['header'] = header
+
+            population_data = {'total': pop_data_total}
+            populations_data[population] = population_data
+
+        filename = filenames[1]
+        for population in f1_populations:
+            pop_data_total = {}
+            pop_data_total['filename'] = filename
+            header = ''
+            if population == 'reported':
+                header = regional_abbreviations[region]+'-pt'
+            if population == 'deaths':
+                header = regional_abbreviations[region]+'-dt'
 
             pop_data_total['header'] = header
 
