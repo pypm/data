@@ -6,8 +6,11 @@ Note: after running this, must fix the .pypm file: remove duplicate entry for Ma
 and add missing fields for that date:
 3330 0 40500 188
 
+Also get hospitalization data by age group
+
 @author: karlen
 """
+import datetime
 
 d_d = {'totalpositive': ['pt', 'Total cases'],
        'deaths': ['dt', 'Total deaths']}
@@ -56,11 +59,28 @@ datums = []
 for key in col_d:
     datums.append(col_d[key])
 
+group_pop = {'0-17': 8.8875, '18-49': 17.222, '50-64': 7.268, '65+':6.2015}
+cdc_name = {'< 18':'0-17', '18-49 yr':'18-49', '50-64 yr':'50-64', '65+ yr':'65+'}
+hosp_by_week = {'0-17':{}, '18-49':{}, '50-64':{}, '65+':{}}
+
+with open('COVID-19Surveillance_All_Data.csv') as f:
+    for line in f:
+        cols = line.rstrip().split(',')
+        if len(cols) > 9:
+            if cols[0] == 'California':
+                if cols[5] in cdc_name:
+                    if cols[6]=='Overall' and cols[7]=='Overall':
+                        week = int(cols[4])
+                        if cols[8] != 'null':
+                            hosp_count = float(cols[8])*10.*group_pop[cdc_name[cols[5]]]
+                            hosp_by_week[cdc_name[cols[5]]][week] = '{0:.1f}'.format(hosp_count)
+
 with open('california-pypm.csv', 'w') as the_file:
     hbuff = ['date']
     for state in states:
         for dat in datums:
             hbuff.append(state + '-' + dat)
+        hbuff.append(state + '-ht')
     the_file.write(','.join(hbuff) + '\n')
 
     date_list.sort()
@@ -70,6 +90,8 @@ with open('california-pypm.csv', 'w') as the_file:
 
     for date in date_list:
         if date > '2020-02-29':
+            parts = date.split('-')
+            week = datetime.date(int(parts[0]), int(parts[1]), int(parts[2])).isocalendar()[1]
             dict_by_state = dict_by_date[date]
             buff = [date]
             for state in states:
@@ -81,4 +103,8 @@ with open('california-pypm.csv', 'w') as the_file:
                     if dict_by_datum is not None:
                         val = dict_by_datum[dat]
                     buff.append(val)
+                if week in hosp_by_week[state]:
+                    buff.append(hosp_by_week[state][week])
+                else:
+                    buff.append('')
             the_file.write(','.join(buff) + '\n')

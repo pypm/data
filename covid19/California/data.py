@@ -17,9 +17,9 @@ def get_data_description():
     """
     data = {}
     data['nation'] = 'California'
-    data['description'] = 'California cases and deaths by age'
-    data['source'] = 'California open data portal'
-    data['source_url'] = 'https://data.ca.gov/dataset/covid-19-cases'
+    data['description'] = 'California cases and deaths by age (and hospitalizations)'
+    data['source'] = 'California open data portal (and CDC)'
+    data['source_url'] = 'https://data.ca.gov/dataset/covid-19-cases and https://gis.cdc.gov/grasp/COVIDNet/COVID19_3.html'
 
     # categories
     categories = ['0-17','18-49','50-64','65+']
@@ -42,7 +42,7 @@ def get_data_description():
     for category in categories:
 
         populations_data = {}
-        f0_populations = ['reported','deaths']
+        f0_populations = ['reported','deaths','hospitalized']
         filename = filenames[0]
         for population in f0_populations:
             pop_data_total = {}
@@ -52,6 +52,8 @@ def get_data_description():
                 header = category+'-pt'
             if population == 'deaths':
                 header = category+'-dt'
+            if population == 'hospitalized':
+                header = category+'-ht'
 
             pop_data_total['header'] = header
 
