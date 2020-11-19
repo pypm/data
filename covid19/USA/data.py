@@ -77,7 +77,7 @@ def get_data_description():
         }
 
     files_data = {}
-    filenames = ['usa-pypm.csv','usa-jhu-pypm.csv','usa-hhs-pypm.ca']
+    filenames = ['usa-pypm.csv','usa-jhu-pypm.csv','usa-hhs-pypm.csv']
     for filename in filenames:
         file_data = {}
         file_data['source'] = 'covidtracking.com'
@@ -182,6 +182,3 @@ def get_data_description():
     data['regional_data'] = regions_data
 
     return data
-
-mydesc = get_data_description()
-iii = 1
