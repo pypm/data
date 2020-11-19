@@ -11,8 +11,10 @@ def get_data_description():
     data = {}
     data['nation'] = 'USA'
     data['description'] = 'US by state'
-    data['source'] = 'Covid tracking US and JHU CSSE'
-    data['source_url'] = 'https://covidtracking.com and https://github.com/CSSEGISandData/COVID-19'
+    data['source'] = 'Covid tracking US, JHU CSSE, and US HHS'
+    data['source_url'] = 'https://covidtracking.com and https://github.com/CSSEGISandData/COVID-19'\
+                         'and https://healthdata.gov/dataset/'\
+                         'covid-19-reported-patient-impact-and-hospital-capacity-state-timeseries'
 
     # common regional abbreviations used in the data files
     regional_abbreviations = {
@@ -75,12 +77,14 @@ def get_data_description():
         }
 
     files_data = {}
-    filenames = ['usa-pypm.csv','usa-jhu-pypm.csv']
+    filenames = ['usa-pypm.csv','usa-jhu-pypm.csv','usa-hhs-pypm.ca']
     for filename in filenames:
         file_data = {}
         file_data['source'] = 'covidtracking.com'
         if filename == 'usa-jhu-pypm.csv':
             file_data['source'] = 'JHU CSSE'
+        elif filename == 'usa-hhs-pypm.csv':
+                file_data['source'] = 'US HHS'
         file_data['date header'] = 'Date'
         file_data['date start'] = [2020, 3, 1]
 
@@ -91,10 +95,14 @@ def get_data_description():
     #either daily or total (or both) data can be provided
 
     regions_data = {}
-    f0_populations = ['hospitalized', 'in_hospital',
-                      'icu admissions', 'in_icu',
+    # prior to including HHS data:
+    #f0_populations = ['hospitalized', 'in_hospital',
+    #                  'icu admissions', 'in_icu',
+    #                  'ventilated', 'on_ventilator']
+    f0_populations = ['icu admissions',
                       'ventilated', 'on_ventilator']
     f1_populations = ['reported', 'deaths']
+    f2_populations = ['in_icu','hospitalized','in_hospital']
 
     for region in regional_abbreviations:
 
@@ -142,8 +150,38 @@ def get_data_description():
             population_data = {'total': pop_data_total}
             populations_data[population] = population_data
 
+        filename = filenames[2]
+        for population in f2_populations:
+            if population in ['in_icu','in_hospital']:
+                pop_data_total = {}
+                pop_data_total['filename'] = filename
+                header = ''
+                if population == 'in_icu':
+                    header = regional_abbreviations[region]+'-ic'
+                if population == 'in_hospital':
+                    header = regional_abbreviations[region]+'-hc'
+
+                pop_data_total['header'] = header
+
+                population_data = {'total': pop_data_total}
+                populations_data[population] = population_data
+            if population in ['hospitalized']:
+                pop_data_daily = {}
+                pop_data_daily['filename'] = filename
+                header = ''
+                if population == 'hospitalized':
+                    header = regional_abbreviations[region] + '-hd'
+
+                pop_data_daily['header'] = header
+
+                population_data = {'daily': pop_data_daily}
+                populations_data[population] = population_data
+
         regions_data[region] = populations_data
 
     data['regional_data'] = regions_data
 
     return data
+
+mydesc = get_data_description()
+iii = 1
