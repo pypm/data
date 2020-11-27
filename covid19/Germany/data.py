@@ -18,6 +18,7 @@ def get_data_description():
 
     # common regional abbreviations used in the data files
     regional_abbreviations = {
+        'Germany':'de',
         'Baden-Wurttemberg':'bw',
         'Bavaria':'by',
         'Berlin':'be',
