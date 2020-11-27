@@ -12,12 +12,13 @@ def get_data_description():
     data = {}
     data['nation'] = 'Germany'
     data['description'] = 'Germany by state'
-    data['source'] = 'Robert Koch Institute'
-    data['source_url'] = 'https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html'
+    data['source'] = 'Robert Koch Institute and DIVI'
+    data['source_url'] = 'https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html and '\
+                         'https://www.divi.de/'
 
     # common regional abbreviations used in the data files
     regional_abbreviations = {
-        'Baden-Warttemberg':'bw',
+        'Baden-Wurttemberg':'bw',
         'Bavaria':'by',
         'Berlin':'be',
         'Brandenburg':'bb',
@@ -36,10 +37,10 @@ def get_data_description():
     }
 
     files_data = {}
-    filenames = ['germany-pypm.csv']
+    filenames = ['germany-rki-pypm.csv','germany-divi-pypm.csv']
     for filename in filenames:
         file_data = {}
-        file_data['source'] = 'More detailed information if folder has multiple sources'
+        file_data['source'] = ''
         file_data['date header'] = 'Date'
         file_data['date start'] = [2020, 3, 1]
 
@@ -55,15 +56,32 @@ def get_data_description():
         populations_data = {}
 
         f0_populations = ['reported', 'deaths']
+        f1_populations = ['in_icu', 'on_ventilator']
+
         filename = filenames[0]
         for population in f0_populations:
             pop_data_total = {}
             pop_data_total['filename'] = filename
             header = ''
             if population == 'reported':
-                header = regional_abbreviations[region] + '-p'
+                header = regional_abbreviations[region] + '-pt'
             if population == 'deaths':
-                header = regional_abbreviations[region] + '-d'
+                header = regional_abbreviations[region] + '-dt'
+
+            pop_data_total['header'] = header
+
+            population_data = {'total': pop_data_total}
+            populations_data[population] = population_data
+
+        filename = filenames[1]
+        for population in f1_populations:
+            pop_data_total = {}
+            pop_data_total['filename'] = filename
+            header = ''
+            if population == 'in_icu':
+                header = regional_abbreviations[region]+'-ic'
+            if population == 'on_ventilator':
+                header = regional_abbreviations[region]+'-vc'
 
             pop_data_total['header'] = header
 
