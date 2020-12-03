@@ -39,7 +39,6 @@ i = 0
 last_date = 0
 col_d = {}
 dict_by_date = {}
-dict_by_state = {}
 date_list = []
 
 with open('reported_hospital_utilization_timeseries.csv') as f:
@@ -54,11 +53,11 @@ with open('reported_hospital_utilization_timeseries.csv') as f:
                 j += 1
         else:
             date = columns[fields['date']['column']]
+            if date not in dict_by_date:
+                dict_by_date[date] = {}
+                date_list.append(date)
+
             state = columns[fields['state']['column']]
-            if date != last_date and last_date != 0:
-                dict_by_date[last_date] = dict_by_state
-                date_list.append(last_date)
-                dict_by_state = {}
 
             ic = ''
             try:
@@ -76,17 +75,13 @@ with open('reported_hospital_utilization_timeseries.csv') as f:
             except:
                 pass
 
-            dict_by_state[state] = {
+            dict_by_date[date][state] = {
                 'ic': ic,
                 'hd': hd,
                 'hc': hc
             }
-            last_date = date
-        i += 1
 
-if len(dict_by_state) > 0:
-    dict_by_date[last_date] = dict_by_state
-    date_list.append(last_date)
+        i += 1
 
 datums = ['ic','hd','hc']
 
