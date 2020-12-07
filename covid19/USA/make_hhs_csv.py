@@ -94,10 +94,12 @@ with open('usa-hhs-pypm.csv', 'w') as the_file:
     the_file.write(','.join(hbuff) + '\n')
 
     date_list.sort()
+    # back up data by one day
+    prev_date = '2020-03-01'
     for date in date_list:
-        if date > '2020-03-00':
+        if date > '2020-03-01':
             dict_by_state = dict_by_date[date]
-            buff = [date]
+            buff = [prev_date]
             for state in states:
                 dict_by_datum = None
                 if state in dict_by_state:
@@ -108,3 +110,4 @@ with open('usa-hhs-pypm.csv', 'w') as the_file:
                         val = dict_by_datum[dat]
                     buff.append(val)
             the_file.write(','.join(buff) + '\n')
+            prev_date = date
