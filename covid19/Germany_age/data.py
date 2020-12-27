@@ -17,11 +17,23 @@ def get_data_description():
 
     # common regional abbreviations used in the data files
     regional_abbreviations = {
-        'Germany':'de',
-        'Baden-Wurttemberg':'bw',
-        'Bavaria':'by',
-        'North Rhine-Westphalia':'nw',
-        'Saxony':'sn'
+        'Baden-Wurttemberg': 'bw',
+        'Bavaria': 'by',
+        'Berlin': 'be',
+        'Brandenburg': 'bb',
+        'Bremen': 'hb',
+        'Hamburg': 'hh',
+        'Hesse': 'he',
+        'Lower Saxony': 'ni',
+        'Mecklenburg-Vorpommern': 'mv',
+        'North Rhine-Westphalia': 'nw',
+        'Rhineland-Palatinate': 'rp',
+        'Saarland': 'sl',
+        'Saxony': 'sn',
+        'Saxony-Anhalt': 'st',
+        'Schleswig-Holstein': 'sh',
+        'Thuringia': 'th',
+        'Germany': 'de'
     }
 
     age_groups = {
