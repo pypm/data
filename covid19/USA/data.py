@@ -13,9 +13,9 @@ def get_data_description():
     data['description'] = 'US by state'
     data['source'] = 'Covid tracking US, JHU CSSE, US HHS, US CDC'
     data['source_url'] = 'https://covidtracking.com and https://github.com/CSSEGISandData/COVID-19'\
-                         'and https://healthdata.gov/dataset/'\
+                         ' and https://healthdata.gov/dataset/'\
                          'covid-19-reported-patient-impact-and-hospital-capacity-state-timeseries'\
-                         'and https://data.cdc.gov/Laboratory-Surveillance/Nationwide-Commercial-Laboratory' \
+                         ' and https://data.cdc.gov/Laboratory-Surveillance/Nationwide-Commercial-Laboratory' \
                          '-Seroprevalence-Su/d2tw-32xv '
 
     # common regional abbreviations used in the data files

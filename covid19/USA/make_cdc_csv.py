@@ -11,11 +11,29 @@ def get_infected(state,day):
     infected = 0
     if day >= range_by_state[state][0] and day <= range_by_state[state][1]:
         data = nt_by_state[state]
+        period_before = None
+        period_after = None
         for period in data:
+            if day > period['end']:
+                period_before = period
+            if period_after is None and day < period['start']:
+                period_after = period
             if day >= period['start'] and day <= period['end']:
                 infected = period['infected']
                 break
-    return infected
+        # do linear interpolation for missing parts
+        if infected == 0:
+            inf_b = period_before['infected']
+            inf_a = period_after['infected']
+            d_b = period_before['end']
+            d_a = period_after['start']
+            r_inf = inf_b + 1.*(day - d_b)/(d_a - d_b)*(inf_a - inf_b)
+            infected = int(r_inf)
+
+    str_inf = ''
+    if infected !=0:
+        str_inf = str(infected)
+    return str_inf
 
 regional_abbreviations = {
         'Alaska':'AK',
@@ -108,9 +126,8 @@ with open('Nationwide_Commercial_Laboratory_Seroprevalence_Survey.csv') as f:
             start_day = (start-t0).days
             end_day = (end-t0).days
 
-            long_data = groups[2].split(',')
             infected = groups[2].split(',')[40]
-            if infected != '':
+            if infected != '' and int(infected) != 0:
                 nt_data = {'start':start_day, 'end':end_day, 'infected':int(infected)}
 
                 if state not in nt_by_state:
@@ -143,7 +160,7 @@ with open('usa-cdc-pypm.csv', 'w') as the_file:
     for i in range(n_days):
         buff = [the_date.isoformat()]
         for state in nt_by_state:
-            buff.append(str(get_infected(state,i)))
+            buff.append(get_infected(state,i))
 
         the_file.write(','.join(buff) + '\n')
         the_date += timedelta(days=1)
