@@ -6,15 +6,17 @@ Example of data description file: data.py
 """
 
 def get_data_description():
-    """ Define data provided by US covidtracking.com and JHU
+    """ Define data provided by US covidtracking.com, JHU, HHS, CDC
     """
     data = {}
     data['nation'] = 'USA'
     data['description'] = 'US by state'
-    data['source'] = 'Covid tracking US, JHU CSSE, and US HHS'
+    data['source'] = 'Covid tracking US, JHU CSSE, US HHS, US CDC'
     data['source_url'] = 'https://covidtracking.com and https://github.com/CSSEGISandData/COVID-19'\
                          'and https://healthdata.gov/dataset/'\
-                         'covid-19-reported-patient-impact-and-hospital-capacity-state-timeseries'
+                         'covid-19-reported-patient-impact-and-hospital-capacity-state-timeseries'\
+                         'and https://data.cdc.gov/Laboratory-Surveillance/Nationwide-Commercial-Laboratory' \
+                         '-Seroprevalence-Su/d2tw-32xv '
 
     # common regional abbreviations used in the data files
     regional_abbreviations = {
@@ -77,14 +79,11 @@ def get_data_description():
         }
 
     files_data = {}
-    filenames = ['usa-pypm.csv','usa-jhu-pypm.csv','usa-hhs-pypm.csv']
-    for filename in filenames:
+    filenames = ['usa-pypm.csv','usa-jhu-pypm.csv','usa-hhs-pypm.csv','usa-cdc-pypm.csv']
+    sources = ['covidtracking.com','JHU CSSE','US HHS','US CDC']
+    for i,filename in enumerate(filenames):
         file_data = {}
-        file_data['source'] = 'covidtracking.com'
-        if filename == 'usa-jhu-pypm.csv':
-            file_data['source'] = 'JHU CSSE'
-        elif filename == 'usa-hhs-pypm.csv':
-                file_data['source'] = 'US HHS'
+        file_data['source'] = sources[i]
         file_data['date header'] = 'Date'
         file_data['date start'] = [2020, 3, 1]
 
@@ -103,6 +102,7 @@ def get_data_description():
                       'ventilated', 'on_ventilator']
     f1_populations = ['reported', 'deaths']
     f2_populations = ['in_icu','hospitalized','in_hospital']
+    f3_populations = ['infected']
 
     for region in regional_abbreviations:
 
@@ -176,6 +176,19 @@ def get_data_description():
 
                 population_data = {'daily': pop_data_daily}
                 populations_data[population] = population_data
+
+        filename = filenames[3]
+        for population in f3_populations:
+            pop_data_total = {}
+            pop_data_total['filename'] = filename
+            header = ''
+            if population == 'infected':
+                header = regional_abbreviations[region] + '-nt'
+
+            pop_data_total['header'] = header
+
+            population_data = {'total': pop_data_total}
+            populations_data[population] = population_data
 
         regions_data[region] = populations_data
 
