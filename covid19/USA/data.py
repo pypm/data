@@ -79,8 +79,8 @@ def get_data_description():
         }
 
     files_data = {}
-    filenames = ['usa-pypm.csv','usa-jhu-pypm.csv','usa-hhs-pypm.csv','usa-cdc-pypm.csv']
-    sources = ['covidtracking.com','JHU CSSE','US HHS','US CDC']
+    filenames = ['usa-pypm.csv','usa-jhu-pypm.csv','usa-hhs-pypm.csv','usa-cdc-pypm.csv','usa-vacc-pypm.csv']
+    sources = ['covidtracking.com','JHU CSSE','US HHS','US CDC','Private']
     for i,filename in enumerate(filenames):
         file_data = {}
         file_data['source'] = sources[i]
@@ -103,6 +103,7 @@ def get_data_description():
     f1_populations = ['reported', 'deaths']
     f2_populations = ['in_icu','hospitalized','in_hospital']
     f3_populations = ['infected']
+    f4_populations = ['vaccinated']
 
     for region in regional_abbreviations:
 
@@ -184,6 +185,19 @@ def get_data_description():
             header = ''
             if population == 'infected':
                 header = regional_abbreviations[region] + '-nt'
+
+            pop_data_total['header'] = header
+
+            population_data = {'total': pop_data_total}
+            populations_data[population] = population_data
+
+        filename = filenames[4]
+        for population in f4_populations:
+            pop_data_total = {}
+            pop_data_total['filename'] = filename
+            header = ''
+            if population == 'vaccinated':
+                header = regional_abbreviations[region] + '-xt'
 
             pop_data_total['header'] = header
 
