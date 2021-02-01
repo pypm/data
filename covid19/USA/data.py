@@ -11,12 +11,13 @@ def get_data_description():
     data = {}
     data['nation'] = 'USA'
     data['description'] = 'US by state'
-    data['source'] = 'Covid tracking US, JHU CSSE, US HHS, US CDC'
+    data['source'] = 'Covid tracking US, JHU CSSE, US HHS, US CDC, YYG'
     data['source_url'] = 'https://covidtracking.com and https://github.com/CSSEGISandData/COVID-19'\
                          ' and https://healthdata.gov/dataset/'\
                          'covid-19-reported-patient-impact-and-hospital-capacity-state-timeseries'\
                          ' and https://data.cdc.gov/Laboratory-Surveillance/Nationwide-Commercial-Laboratory' \
-                         '-Seroprevalence-Su/d2tw-32xv '
+                         '-Seroprevalence-Su/d2tw-32xv'\
+                         ' and https://github.com/youyanggu/covid19-cdc-vaccination-data'
 
     # common regional abbreviations used in the data files
     regional_abbreviations = {
