@@ -24,7 +24,8 @@ def get_data_description():
         '60s': '60',
         '70s': '70',
         'Over 79': '80',
-        'Unknown': 'xx'
+        'Unknown': 'xx',
+        'All': 'il'
     }
 
     files_data = {}

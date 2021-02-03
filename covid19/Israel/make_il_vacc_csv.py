@@ -16,7 +16,8 @@ regional_abbreviations = {
     '60s': '60',
     '70s': '70',
     'Over 79': '80',
-    'Unknown': 'xx'
+    'Unknown': 'xx',
+    'All': 'il'
 }
 
 age_group_dict = {
@@ -78,20 +79,30 @@ with open('il-vacc-pypm.csv', 'w') as the_file:
     done = False
     while date_str <= last_date:
         buff = [date_str]
+        vacc_sum = 0
         for group in regional_abbreviations:
             age_group = regional_abbreviations[group]
-            if date_str in vacc_by_age:
-                if age_group in vacc_by_age[date_str]:
-                    cumulative_dose1[age_group] += vacc_by_age[date_str][age_group]
-                    val = cumulative_dose1[age_group]
-                    if val > 0:
-                        buff.append(str(val))
+            if group != 'All':
+                if date_str in vacc_by_age:
+                    if age_group in vacc_by_age[date_str]:
+                        vacc_sum += vacc_by_age[date_str][age_group]
+                        cumulative_dose1[age_group] += vacc_by_age[date_str][age_group]
+                        val = cumulative_dose1[age_group]
+                        if val > 0:
+                            buff.append(str(val))
+                        else:
+                            buff.append('')
                     else:
                         buff.append('')
                 else:
                     buff.append('')
             else:
-                buff.append('')
+                cumulative_dose1[age_group] += vacc_sum
+                val = cumulative_dose1[age_group]
+                if val > 0:
+                    buff.append(str(val))
+                else:
+                    buff.append('')
 
         the_file.write(','.join(buff) + '\n')
         the_date += timedelta(days=1)

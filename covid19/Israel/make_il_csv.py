@@ -16,7 +16,8 @@ regional_abbreviations = {
     '60s': '60',
     '70s': '70',
     'Over 79': '80',
-    'Unknown': 'xx'
+    'Unknown': 'xx',
+    'All':'il'
 }
 
 age_group_dict = {
@@ -111,26 +112,37 @@ with open('il-pypm.csv', 'w') as the_file:
         daily_death = {}
         daily_death_xtra = {}
         for group in regional_abbreviations:
-            age_group = regional_abbreviations[group]
-            daily_case_xtra[age_group] = weekly_case_by_age[data_week][age_group] % 7
-            daily_case[age_group] = (weekly_case_by_age[data_week][age_group]-daily_case_xtra[age_group]) / 7
-            daily_death_xtra[age_group] = weekly_death_by_age[data_week][age_group] % 7
-            daily_death[age_group] = (weekly_death_by_age[data_week][age_group] - daily_death_xtra[age_group]) / 7
+            if group != 'All':
+                age_group = regional_abbreviations[group]
+                daily_case_xtra[age_group] = weekly_case_by_age[data_week][age_group] % 7
+                daily_case[age_group] = (weekly_case_by_age[data_week][age_group]-daily_case_xtra[age_group]) / 7
+                daily_death_xtra[age_group] = weekly_death_by_age[data_week][age_group] % 7
+                daily_death[age_group] = (weekly_death_by_age[data_week][age_group] - daily_death_xtra[age_group]) / 7
         for i in range(7):
             date_str = the_date.isoformat()
             buff = [date_str]
+            case_sum = 0
+            death_sum = 0
             for group in regional_abbreviations:
                 age_group = regional_abbreviations[group]
-                cumulative_case[age_group] += daily_case[age_group]
-                cumulative_death[age_group] += daily_death[age_group]
-                if i==0:
-                    cumulative_case[age_group] += daily_case_xtra[age_group]
-                    cumulative_death[age_group] += daily_death_xtra[age_group]
+                if group != 'All':
+                    cumulative_case[age_group] += daily_case[age_group]
+                    cumulative_death[age_group] += daily_death[age_group]
+                    case_sum += daily_case[age_group]
+                    death_sum += daily_death[age_group]
+                    if i==0:
+                        cumulative_case[age_group] += daily_case_xtra[age_group]
+                        cumulative_death[age_group] += daily_death_xtra[age_group]
+                        case_sum += daily_case_xtra[age_group]
+                        death_sum += daily_death_xtra[age_group]
+                else:
+                    cumulative_case[age_group] += case_sum
+                    cumulative_death[age_group] += death_sum
+
                 buff.append(str(cumulative_case[age_group]))
                 buff.append(str(cumulative_death[age_group]))
 
             the_file.write(','.join(buff) + '\n')
             the_date += timedelta(days=1)
-
 
 print('Total cases =',total_cases,' total deaths=',total_deaths)
