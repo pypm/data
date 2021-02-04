@@ -95,6 +95,9 @@ with open('il-pypm.csv', 'w') as the_file:
     for i in range(14):
         date_str = the_date.isoformat()
         buff = [date_str]
+        for group in regional_abbreviations:
+            buff.append('')
+            buff.append('')
         the_file.write(','.join(buff) + '\n')
         the_date += timedelta(days=1)
 
@@ -106,7 +109,7 @@ with open('il-pypm.csv', 'w') as the_file:
         cumulative_death[age_group] = 0
 
     for data_week in weekly_case_by_age:
-        # use equal numbers per day, with additional on first day of week
+        # use equal numbers per day, with additional on first days of week
         daily_case = {}
         daily_case_xtra = {}
         daily_death = {}
@@ -130,11 +133,12 @@ with open('il-pypm.csv', 'w') as the_file:
                     cumulative_death[age_group] += daily_death[age_group]
                     case_sum += daily_case[age_group]
                     death_sum += daily_death[age_group]
-                    if i==0:
-                        cumulative_case[age_group] += daily_case_xtra[age_group]
-                        cumulative_death[age_group] += daily_death_xtra[age_group]
-                        case_sum += daily_case_xtra[age_group]
-                        death_sum += daily_death_xtra[age_group]
+                    if i < daily_case_xtra[age_group]:
+                        cumulative_case[age_group] += 1
+                        case_sum += 1
+                    if i < daily_death_xtra[age_group]:
+                        cumulative_death[age_group] += 1
+                        death_sum += 1
                 else:
                     cumulative_case[age_group] += case_sum
                     cumulative_death[age_group] += death_sum
