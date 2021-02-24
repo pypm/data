@@ -44,7 +44,7 @@ def get_data_description():
     #either daily or total (or both) data can be provided
 
     regions_data = {}
-    f0_populations = ['reported', 'deaths']
+    f0_populations = ['reported', 'reported_v', 'deaths']
     f1_populations = ['vaccinated']
 
     for region in regional_abbreviations:
@@ -58,6 +58,8 @@ def get_data_description():
             header = ''
             if population == 'reported':
                 header = regional_abbreviations[region]+'-pt'
+            if population == 'reported_v':
+                header = regional_abbreviations[region]+'-qt'
             if population == 'deaths':
                 header = regional_abbreviations[region]+'-dt'
 
