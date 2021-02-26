@@ -27,13 +27,20 @@ weekly_variants_by_region = {}
 t0 = date(2020,3,1)
 last_week = '2020-03-01'
 
-with open('uk_var.csv') as f:
+# format changed after release 5
+filename = 'uk_var_6.csv'
+
+with open(filename) as f:
 
     for j,line in enumerate(f):
         if j == 0:
             header = line.strip().split(',')
-            cases_index = header.index('n_Total')
-            variants_index = header.index('n_Confirmed SGTF')
+            if filename == 'uk_var_5.csv':
+                cases_index = header.index('n_Total')
+                variants_index = header.index('n_Confirmed SGTF')
+            elif filename == 'uk_var_6.csv':
+                cases_index = header.index('n_Total classifiable')
+                variants_index = header.index('n_Cases with confirmed SGTF')
         else:
             fields = line.strip().split(',')
             data_week_text = fields[1].split('-')
@@ -44,10 +51,16 @@ with open('uk_var.csv') as f:
                 weekly_cases_by_region[data_week] = {}
                 weekly_variants_by_region[data_week] = {}
             if region not in weekly_cases_by_region[data_week]:
-                weekly_cases_by_region[data_week][region] = int(float(fields[cases_index]))
-                total_cases += int(float(fields[cases_index]))
-                weekly_variants_by_region[data_week][region] = int(float(fields[variants_index]))
-                total_variants += int(float(fields[variants_index]))
+                if fields[cases_index] != '':
+                    cases = int(float(fields[cases_index]))
+                    variants = int(float(fields[variants_index]))
+                else:
+                    cases = 0
+                    variants = 0
+                weekly_cases_by_region[data_week][region] = cases
+                total_cases += cases
+                weekly_variants_by_region[data_week][region] = variants
+                total_variants += variants
 
 with open('uk-pypm.csv', 'w') as the_file:
 
@@ -60,8 +73,11 @@ with open('uk-pypm.csv', 'w') as the_file:
 
     the_date = date(2020,3,1)
 
-    # no data until Sept 7
-    while the_date < date(2020,9,7):
+    first_day = 7
+    if filename == 'uk_var_6.csv':
+        first_day = 3
+    # no data until Sept 7 or 3
+    while the_date < date(2020,9,first_day):
         date_str = the_date.isoformat()
         buff = [date_str]
         for region in regional_abbreviations:
