@@ -111,17 +111,26 @@ with open('Nationwide_Commercial_Laboratory_Seroprevalence_Survey.csv') as f:
             state = cols_0[0]
 
             cols_1 = groups[1].split(',')
-            date_range = cols_1[0]
-            day_range = date_range.split(',')[0]
-            year = cols_1[1].split(' ')[1]
-            day_cols = day_range.split(' ')
-            month_start = day_cols[0]
-            day_start = day_cols[1]
-            month_end = day_cols[3]
-            day_end = day_cols[4]
+            if len(cols_1) == 2: # dates within one year
+                date_range = cols_1[0]
+                day_range = date_range.split(',')[0]
+                year_start = cols_1[1].split(' ')[1]
+                year_end = year_start
+                day_cols = day_range.split(' ')
+                month_start = day_cols[0]
+                day_start = day_cols[1]
+                month_end = day_cols[3]
+                day_end = day_cols[4]
+            else:
+                month_start = cols_1[0].split(' ')[0]
+                day_start = cols_1[0].split(' ')[1]
+                year_start = cols_1[1].strip().split(' ')[0]
+                month_end = cols_1[1].strip().split(' ')[2]
+                day_end = cols_1[1].strip().split(' ')[3]
+                year_end = cols_1[2].strip()
 
-            start = datetime.strptime(' '.join([month_start,day_start,year]), '%b %d %Y').date()
-            end = datetime.strptime(' '.join([month_end,day_end,year]), '%b %d %Y').date()
+            start = datetime.strptime(' '.join([month_start,day_start,year_start]), '%b %d %Y').date()
+            end = datetime.strptime(' '.join([month_end,day_end,year_end]), '%b %d %Y').date()
 
             start_day = (start-t0).days
             end_day = (end-t0).days
