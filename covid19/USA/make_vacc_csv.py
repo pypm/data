@@ -75,22 +75,24 @@ vacc_by_state = {}
 t0 = date(2020,3,1)
 last_date = '2020-03-01'
 
-with open('aggregated.csv') as f:
+with open('../vaccinations.csv') as f:
 
-    for i,line in enumerate(f):
+    for i, line in enumerate(f):
         if i == 0:
             header = line.split(',')
-            dose1_index = header.index('Administered_Dose1')
+            dose1_index = header.index('total_persons_vaccinated')
         else:
             fields = line.split(',')
-            data_date = fields[0]
-            if data_date > last_date:
-                last_date = data_date
-            state = fields[2]
-            if state in states:
-                if state not in vacc_by_state:
-                    vacc_by_state[state] = {}
-                vacc_by_state[state][data_date] = fields[dose1_index]
+            key = fields[1]
+            if key[0:3] == 'US_':
+                state = key[3:5]
+                if state in states:
+                    data_date = fields[0]
+                    if data_date > last_date:
+                        last_date = data_date
+                    if state not in vacc_by_state:
+                        vacc_by_state[state] = {}
+                    vacc_by_state[state][data_date] = fields[dose1_index]
 
 with open('usa-vacc-pypm.csv', 'w') as the_file:
 

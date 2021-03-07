@@ -12,8 +12,9 @@ def get_data_description():
     data = {}
     data['nation'] = 'Canada'
     data['description'] = 'Canada by province'
-    data['source'] = 'Esri Canada and virihealth.com'
-    data['source_url'] = 'https://resources-covid19canada.hub.arcgis.com/'
+    data['source'] = 'Esri Canada, virihealth.com, and Google open data'
+    data['source_url'] = 'https://resources-covid19canada.hub.arcgis.com/' \
+                         ' and https://github.com/GoogleCloudPlatform/covid-19-open-data'
 
     # common regional abbreviations used in the data files
     regional_abbreviations = {
@@ -33,10 +34,10 @@ def get_data_description():
     }
 
     files_data = {}
-    filenames = ['ca-pypm.csv']
+    filenames = ['ca-pypm.csv','ca-vacc-pypm.csv']
     for filename in filenames:
         file_data = {}
-        file_data['source'] = 'More detailed information if folder has multiple sources'
+        file_data['source'] = ''
         file_data['date header'] = 'Date'
         file_data['date start'] = [2020, 3, 1]
 
@@ -52,6 +53,8 @@ def get_data_description():
         populations_data = {}
 
         f0_populations = ['reported', 'deaths']
+        f1_populations = ['vaccinated']
+
         filename = filenames[0]
         for population in f0_populations:
             pop_data_total = {}
@@ -88,6 +91,19 @@ def get_data_description():
                 header = regional_abbreviations[region] + '-ht'
             if population == 'in_icu':
                 header = regional_abbreviations[region] + '-it'
+
+            pop_data_total['header'] = header
+
+            population_data = {'total': pop_data_total}
+            populations_data[population] = population_data
+
+        filename = filenames[1]
+        for population in f1_populations:
+            pop_data_total = {}
+            pop_data_total['filename'] = filename
+            header = ''
+            if population == 'vaccinated':
+                header = regional_abbreviations[region] + '-xt'
 
             pop_data_total['header'] = header
 

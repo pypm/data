@@ -11,8 +11,9 @@ def get_data_description():
     data = {}
     data['nation'] = 'EU'
     data['description'] = 'EU by State'
-    data['source'] = 'JHU'
-    data['source_url'] = 'https://github.com/epiforecasts/covid19-forecast-hub-europe/tree/main/data-truth/JHU'
+    data['source'] = 'JHU and Google Open Data'
+    data['source_url'] = 'https://github.com/epiforecasts/covid19-forecast-hub-europe/tree/main/data-truth/JHU' \
+                         ' and https://github.com/GoogleCloudPlatform/covid-19-open-data'
 
     # common regional abbreviations used in the data files
     regional_abbreviations = {
@@ -51,8 +52,8 @@ def get_data_description():
     }
 
     files_data = {}
-    filenames = ['eu-jhu-pypm.csv']
-    sources = ['JHU']
+    filenames = ['eu-jhu-pypm.csv','eu-vacc-pypm.csv']
+    sources = ['JHU','Google']
     for i,filename in enumerate(filenames):
         file_data = {}
         file_data['source'] = sources[i]
@@ -67,6 +68,7 @@ def get_data_description():
 
     regions_data = {}
     f0_populations = ['reported', 'deaths']
+    f1_populations = ['vaccinated']
 
     for region in regional_abbreviations:
 
@@ -81,6 +83,19 @@ def get_data_description():
                 header = regional_abbreviations[region]+'-pt'
             if population == 'deaths':
                 header = regional_abbreviations[region]+'-dt'
+
+            pop_data_total['header'] = header
+
+            population_data = {'total': pop_data_total}
+            populations_data[population] = population_data
+
+        filename = filenames[1]
+        for population in f1_populations:
+            pop_data_total = {}
+            pop_data_total['filename'] = filename
+            header = ''
+            if population == 'vaccinated':
+                header = regional_abbreviations[region] + '-xt'
 
             pop_data_total['header'] = header
 

@@ -12,9 +12,10 @@ def get_data_description():
     data = {}
     data['nation'] = 'Germany'
     data['description'] = 'Germany by state'
-    data['source'] = 'Robert Koch Institute and DIVI'
-    data['source_url'] = 'https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html and '\
-                         'https://www.divi.de/'
+    data['source'] = 'Robert Koch Institute, DIVI, Google Open Data'
+    data['source_url'] = 'https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html '\
+                         'https://www.divi.de/' \
+                         ' and https://github.com/GoogleCloudPlatform/covid-19-open-data'
 
     # common regional abbreviations used in the data files
     regional_abbreviations = {
@@ -38,7 +39,7 @@ def get_data_description():
     }
 
     files_data = {}
-    filenames = ['germany-rki-pypm.csv','germany-divi-pypm.csv']
+    filenames = ['germany-rki-pypm.csv','germany-divi-pypm.csv','germany-vacc-pypm.csv']
     for filename in filenames:
         file_data = {}
         file_data['source'] = ''
@@ -58,6 +59,7 @@ def get_data_description():
 
         f0_populations = ['reported', 'deaths']
         f1_populations = ['in_icu', 'on_ventilator']
+        f2_populations = ['vaccinated']
 
         filename = filenames[0]
         for population in f0_populations:
@@ -83,6 +85,19 @@ def get_data_description():
                 header = regional_abbreviations[region]+'-ic'
             if population == 'on_ventilator':
                 header = regional_abbreviations[region]+'-vc'
+
+            pop_data_total['header'] = header
+
+            population_data = {'total': pop_data_total}
+            populations_data[population] = population_data
+
+        filename = filenames[2]
+        for population in f2_populations:
+            pop_data_total = {}
+            pop_data_total['filename'] = filename
+            header = ''
+            if population == 'vaccinated':
+                header = regional_abbreviations[region] + '-xt'
 
             pop_data_total['header'] = header
 
