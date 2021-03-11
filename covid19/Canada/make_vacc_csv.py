@@ -59,19 +59,28 @@ with open('ca-vacc-pypm.csv', 'w') as the_file:
 
     the_date = date(2020,3,1)
     done = False
+    started = {}
+    previous_buff = None
     while not done:
         date_str = the_date.isoformat()
         buff = [date_str]
         for state in states:
             if date_str in vacc_by_state[state]:
                 val = vacc_by_state[state][date_str]
-                if val != '' and int(val) > 0:
-                    buff.append(vacc_by_state[state][date_str])
-                else:
-                    buff.append('')
+            else:
+                val = ''
+
+            if val != '' and int(val) > 0:
+                started[state] = True
+                buff.append(vacc_by_state[state][date_str])
+            elif state in started:
+                # repeat value from previous line in current column
+                buff.append(previous_buff[len(buff)])
             else:
                 buff.append('')
 
+
         the_file.write(','.join(buff) + '\n')
         the_date += timedelta(days=1)
+        previous_buff = buff
         done = date_str == last_date
