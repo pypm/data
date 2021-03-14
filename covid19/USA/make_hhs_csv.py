@@ -52,7 +52,7 @@ with open('COVID-19_Reported_Patient_Impact_and_Hospital_Capacity_by_State_Times
                         fields[field]['column'] = j
                 j += 1
         else:
-            date = columns[fields['date']['column']]
+            date = columns[fields['date']['column']].replace('/','-')
             if date not in dict_by_date:
                 dict_by_date[date] = {}
                 date_list.append(date)
