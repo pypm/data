@@ -41,7 +41,7 @@ col_d = {}
 dict_by_date = {}
 date_list = []
 
-with open('reported_hospital_utilization_timeseries.csv') as f:
+with open('COVID-19_Reported_Patient_Impact_and_Hospital_Capacity_by_State_Timeseries.csv') as f:
     for line in f:
         columns = line.split(',')
         if i == 0:
