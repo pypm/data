@@ -28,7 +28,7 @@ t0 = date(2020,3,1)
 last_week = '2020-03-01'
 
 # format changed after release 5
-filename = 'uk_var_6.csv'
+filename = 'uk_var_7.csv'
 
 with open(filename) as f:
 
@@ -38,7 +38,7 @@ with open(filename) as f:
             if filename == 'uk_var_5.csv':
                 cases_index = header.index('n_Total')
                 variants_index = header.index('n_Confirmed SGTF')
-            elif filename == 'uk_var_6.csv':
+            elif filename in ['uk_var_6.csv','uk_var_7.csv']:
                 cases_index = header.index('n_Total classifiable')
                 variants_index = header.index('n_Cases with confirmed SGTF')
         else:
@@ -76,6 +76,8 @@ with open('uk-pypm.csv', 'w') as the_file:
     first_day = 7
     if filename == 'uk_var_6.csv':
         first_day = 3
+    elif filename == 'uk_var_7.csv':
+        first_day = 2
     # no data until Sept 7 or 3
     while the_date < date(2020,9,first_day):
         date_str = the_date.isoformat()
