@@ -16,7 +16,7 @@ def get_data_description():
 
     # categories
     categories = ['All','Male','Female','Fraser','Interior','Northern','Vancouver Coastal',
-                  'Vancouver Island','<10','10-19','20-29','30-39','40-49','50-59','60-69','70-79',
+                  'Vancouver Island','Out of Canada','<10','10-19','20-29','30-39','40-49','50-59','60-69','70-79',
                   '80-89','89+','Unknown']
 
     files_data = {}
