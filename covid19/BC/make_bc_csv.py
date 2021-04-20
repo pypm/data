@@ -43,8 +43,11 @@ with open('BCCDC_COVID19_Dashboard_Case_Details.csv') as f:
         for j in range(len(cols)):
             cols[j] = cols[j].strip('"')
         if i > 0:
-            dd = cols[0].split('/')
-            date = datetime.date(int(dd[2]), int(dd[0]), int(dd[1]))
+            # Format changes from time to time!
+            #dd = cols[0].split('/')
+            #date = datetime.date(int(dd[2]), int(dd[0]), int(dd[1]))
+            dd = cols[0].split('-')
+            date = datetime.date(int(dd[0]), int(dd[1]), int(dd[2]))
             if i == 1:
                 first_date = date
 
