@@ -84,7 +84,7 @@ with open('../vaccinations.csv') as f:
         else:
             fields = line.split(',')
             key = fields[1]
-            if key[0:3] == 'US_':
+            if key[0:3] == 'US_' and len(key)==5:
                 state = key[3:5]
                 if state in states:
                     data_date = fields[0]
