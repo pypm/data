@@ -52,6 +52,23 @@ with open('../vaccinations.csv') as f:
                         vacc_by_state[state] = {}
                     vacc_by_state[state][data_date] = fields[dose1_index]
 
+# Add weekly data from https://impfdashboard.de/daten
+# *** note: need to switch order of mv and ni in data ***
+
+data_dates = []
+datas = []
+
+data_dates.append('2021-05-02')
+datas.append([3084030,3786154, 952267,644240,200593,527133,1704620,2282000,485297,5313732,1134694,309836,1047705,622836,777485,561630])
+
+data_dates.append('2021-05-09')
+datas.append([3567730,4381270,1090630,725504,232341,605130,2048352,2710302,562619,6210075,1286872,363731,1174652,708859,889448,638408,])
+
+for i,data_date in enumerate(data_dates):
+    last_date = data_date
+    for istate, state in enumerate(states):
+        vacc_by_state[state][data_date] = str(datas[i][istate])
+
 with open('germany-vacc-pypm.csv', 'w') as the_file:
 
     hbuff = ['date']
