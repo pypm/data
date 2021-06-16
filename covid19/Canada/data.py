@@ -12,9 +12,9 @@ def get_data_description():
     data = {}
     data['nation'] = 'Canada'
     data['description'] = 'Canada by province'
-    data['source'] = 'Esri Canada, virihealth.com, and Google open data'
+    data['source'] = 'Esri Canada, virihealth.com, and infobase canada'
     data['source_url'] = 'https://resources-covid19canada.hub.arcgis.com/' \
-                         ' and https://github.com/GoogleCloudPlatform/covid-19-open-data'
+                         ' and https://health-infobase.canada.ca/src/data/covidLive/vaccination-coverage-byAgeAndSex.csv'
 
     # common regional abbreviations used in the data files
     regional_abbreviations = {
