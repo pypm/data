@@ -76,6 +76,7 @@ with open('eu-vacc-pypm.csv', 'w') as the_file:
     the_file.write(','.join(hbuff) + '\n')
 
     the_date = date(2020,3,1)
+    last_val = {}
     done = False
     while not done:
         date_str = the_date.isoformat()
@@ -84,9 +85,14 @@ with open('eu-vacc-pypm.csv', 'w') as the_file:
             if date_str in vacc_by_state[state]:
                 val = vacc_by_state[state][date_str]
                 if val != '' and int(val) > 0:
-                    buff.append(vacc_by_state[state][date_str])
+                    buff.append(val)
+                    last_val[state] = val
+                elif state in last_val:
+                    buff.append(last_val[state])
                 else:
                     buff.append('')
+            elif state in last_val:
+                buff.append(last_val[state])
             else:
                 buff.append('')
 
