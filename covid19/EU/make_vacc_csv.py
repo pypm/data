@@ -55,7 +55,7 @@ with open('../vaccinations.csv') as f:
     for i, line in enumerate(f):
         if i == 0:
             header = line.split(',')
-            dose1_index = header.index('total_persons_vaccinated')
+            dose1_index = header.index('cumulative_persons_vaccinated')
         else:
             fields = line.split(',')
             state = fields[1]
