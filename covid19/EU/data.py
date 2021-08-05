@@ -52,8 +52,8 @@ def get_data_description():
     }
 
     files_data = {}
-    filenames = ['eu-jhu-pypm.csv','eu-vacc-pypm.csv']
-    sources = ['JHU','Google']
+    filenames = ['eu-jhu-pypm.csv','eu-vacc-pypm.csv','eu-ecdc-pypm.csv']
+    sources = ['JHU','Google','ECDC']
     for i,filename in enumerate(filenames):
         file_data = {}
         file_data['source'] = sources[i]
@@ -69,6 +69,7 @@ def get_data_description():
     regions_data = {}
     f0_populations = ['reported', 'deaths']
     f1_populations = ['vaccinated']
+    f2_populations = ['hospitalized']
 
     for region in regional_abbreviations:
 
@@ -100,6 +101,19 @@ def get_data_description():
             pop_data_total['header'] = header
 
             population_data = {'total': pop_data_total}
+            populations_data[population] = population_data
+
+        filename = filenames[2]
+        for population in f2_populations:
+            pop_data_daily = {}
+            pop_data_daily['filename'] = filename
+            header = ''
+            if population == 'hospitalized':
+                header = regional_abbreviations[region] + '-hd'
+
+            pop_data_daily['header'] = header
+
+            population_data = {'daily': pop_data_daily}
             populations_data[population] = population_data
 
         regions_data[region] = populations_data
