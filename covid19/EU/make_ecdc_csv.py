@@ -10,6 +10,41 @@ from datetime import timedelta
 t0 = datetime.date(2020,3,1)
 last_date = datetime.date(2020,3,1)
 
+regional_abbreviations = {
+    'Austria': 'AT',
+    'Belgium': 'BE',
+    'Bulgaria': 'BG',
+    'Croatia': 'HR',
+    'Cyprus': 'CY',
+    'Czechia': 'CZ',
+    'Denmark': 'DK',
+    'Estonia': 'EE',
+    'Finland': 'FI',
+    'France': 'FR',
+    'Germany': 'DE',
+    'Greece': 'GR',
+    'Hungary': 'HU',
+    'Iceland': 'IS',
+    'Ireland': 'IE',
+    'Italy': 'IT',
+    'Latvia': 'LV',
+    'Liechtenstein': 'LI',
+    'Lithuania': 'LT',
+    'Luxembourg': 'LU',
+    'Malta': 'MT',
+    'Netherlands': 'NL',
+    'Norway': 'NO',
+    'Poland': 'PL',
+    'Portugal': 'PT',
+    'Romania': 'RO',
+    'Slovakia': 'SK',
+    'Slovenia': 'SI',
+    'Spain': 'ES',
+    'Sweden': 'SE',
+    'Switzerland': 'CH',
+    'United Kingdom': 'GB'
+}
+
 hd_by_state = {}
 
 ecdc_file = 'truth_ECDC-Incident Hospitalizations.csv'
@@ -35,19 +70,24 @@ with open(ecdc_file) as f:
             if record_date > last_date:
                 last_date = record_date
 
+print('Hospitalization data provided for:')
+print(','.join(list(data_by_state.keys())))
+
 with open('eu-ecdc-pypm.csv', 'w') as the_file:
 
     hbuff = ['date']
-    for state in data_by_state:
+    for country in regional_abbreviations:
+        state = regional_abbreviations[country]
         hbuff.append(state + '-hd')
     the_file.write(','.join(hbuff) + '\n')
 
     the_date = datetime.date(2020,3,1)
     while the_date <= last_date:
         buff = [the_date.isoformat()]
-        for state in data_by_state:
+        for country in regional_abbreviations:
+            state = regional_abbreviations[country]
             value = ''
-            if the_date in data_by_state[state]:
+            if state in data_by_state and the_date in data_by_state[state]:
                 value = str(data_by_state[state][the_date])
             buff.append(value)
 
