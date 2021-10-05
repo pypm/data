@@ -97,6 +97,21 @@ def get_data_description():
             population_data = {'total': pop_data_total}
             populations_data[population] = population_data
 
+        f0_populations = ['hospitalized']
+        filename = filenames[0]
+        for population in f0_populations:
+            pop_data_daily = {}
+            pop_data_daily['filename'] = filename
+            header = ''
+
+            if population == 'hospitalized':
+                header = regional_abbreviations[region] + '-hd'
+
+            pop_data_daily['header'] = header
+
+            population_data = {'daily': pop_data_daily}
+            populations_data[population] = population_data
+
         filename = filenames[1]
         for population in f1_populations:
             pop_data_total = {}
