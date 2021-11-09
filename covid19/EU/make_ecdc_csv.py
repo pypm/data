@@ -72,11 +72,21 @@ for raw_file in raw_files:
                 if record_date > last_date_by_state[state]:
                     last_date_by_state[state] = record_date
 
-print('Daily hospitalization data provided in scraped.csv and non-eu.csv up to (last date):')
+print('Daily hospitalization data taken in scraped.csv and non-eu.csv up to (last date):')
 raw_states = []
+bad_states = []
 for state in data_by_state:
     print(state, last_date_by_state[state])
-    raw_states.append(state)
+    #if raw data is out of date, do not use it
+    if (datetime.date.today()-last_date_by_state[state]).days > 30:
+        print(state,' ** raw data not used ** too old')
+        bad_states.append(state)
+    else:
+        raw_states.append(state)
+
+for state in bad_states:
+    del data_by_state[state]
+    del last_date_by_state[state]
 
 # use weekly data for the rest: split across days of week
 ecdc_file = 'truth_ECDC-Incident Hospitalizations.csv'
