@@ -38,40 +38,25 @@ def get_data_description():
     # for each region, define location of each population data (file/column header)
     # either daily or total (or both) data can be provided
 
+    populations = {'reported':{'total':{'header':'-pt','fileid':0}},
+                   'deaths': {'total': {'header': '-dt', 'fileid': 0}},
+                   'icu admissions': {'total': {'header': '-it', 'fileid': 0},'daily': {'header': '-id', 'fileid': 0}},
+                   'in_icu': {'total': {'header': '-ic', 'fileid': 0}},
+                   'hospitalized': {'total': {'header': '-ht', 'fileid': 0}, 'daily': {'header': '-hd', 'fileid': 0}},
+                   'in_hospital': {'total': {'header': '-hc', 'fileid': 0}},
+                   'vaccinated': {'total': {'header': '-xt', 'fileid': 1}}
+                   }
+
     regions_data = {}
     for region in regional_abbreviations:
 
         populations_data = {}
-
-        f0_populations = ['reported', 'deaths']
-        f1_populations = ['vaccinated']
-
-        filename = filenames[0]
-        for population in f0_populations:
-            pop_data_total = {}
-            pop_data_total['filename'] = filename
-            header = ''
-            if population == 'reported':
-                header = regional_abbreviations[region] + '-pt'
-            if population == 'deaths':
-                header = regional_abbreviations[region] + '-dt'
-
-            pop_data_total['header'] = header
-
-            population_data = {'total': pop_data_total}
-            populations_data[population] = population_data
-
-        filename = filenames[1]
-        for population in f1_populations:
-            pop_data_total = {}
-            pop_data_total['filename'] = filename
-            header = ''
-            if population == 'vaccinated':
-                header = regional_abbreviations[region] + '-xt'
-
-            pop_data_total['header'] = header
-
-            population_data = {'total': pop_data_total}
+        for population in populations:
+            population_data = {}
+            for data_type in populations[population]:
+                info = populations[population][data_type]
+                header = regional_abbreviations[region] + info['header']
+                population_data[data_type] = {'header':header, 'filename':filenames[info['fileid']]}
             populations_data[population] = population_data
 
         regions_data[region] = populations_data
