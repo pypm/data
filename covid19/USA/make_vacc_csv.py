@@ -75,24 +75,53 @@ vacc_by_state = {}
 t0 = date(2020,3,1)
 last_date = '2020-03-01'
 
-with open('../vaccinations.csv') as f:
+vacc_filenames = ['COVID-19_Vaccination_Trends_in_the_United_States_National_and_Jurisdictional.csv',
+                  '../vaccinations.csv']
+i_vacc = 0
+vacc_filename = vacc_filenames[i_vacc]
 
-    for i, line in enumerate(f):
-        if i == 0:
-            header = line.split(',')
-            dose1_index = header.index('cumulative_persons_vaccinated')
-        else:
-            fields = line.split(',')
-            key = fields[1]
-            if key[0:3] == 'US_' and len(key)==5:
-                state = key[3:5]
-                if state in states:
-                    data_date = fields[0]
+if i_vacc == 0:
+    with open(vacc_filename) as f:
+
+        for i, line in enumerate(f):
+            if i == 0:
+                header = line.split(',')
+                dose1_index = header.index('Admin_Dose_1_Cumulative')
+                type_index = header.index('date_type')
+                loc_index = header.index('Location')
+            else:
+                fields = line.split(',')
+                date_type = fields[type_index]
+                state = fields[loc_index]
+                if date_type == 'Admin' and state in states:
+                    df = fields[0].split('/')
+                    data_date = '-'.join([df[2],df[0],df[1]])
                     if data_date > last_date:
                         last_date = data_date
                     if state not in vacc_by_state:
                         vacc_by_state[state] = {}
                     vacc_by_state[state][data_date] = fields[dose1_index]
+
+elif i_vacc == 1:
+
+    with open(vacc_filename) as f:
+
+        for i, line in enumerate(f):
+            if i == 0:
+                header = line.split(',')
+                dose1_index = header.index('cumulative_persons_vaccinated')
+            else:
+                fields = line.split(',')
+                key = fields[1]
+                if key[0:3] == 'US_' and len(key)==5:
+                    state = key[3:5]
+                    if state in states:
+                        data_date = fields[0]
+                        if data_date > last_date:
+                            last_date = data_date
+                        if state not in vacc_by_state:
+                            vacc_by_state[state] = {}
+                        vacc_by_state[state][data_date] = fields[dose1_index]
 
 with open('usa-vacc-pypm.csv', 'w') as the_file:
 
