@@ -106,11 +106,66 @@ datums = []
 for key in col_d:
     datums.append(col_d[key])
 
-# read in any hospital admission data (Quebec only)
+# replace BC data with provincial data source
+
+bc_pd = {}
+bc_pt = {}
+with open('../BC/bc-pypm.csv') as f:
+    for i, line in enumerate(f):
+        if i>0:
+            date = datetime.date(2020,3,1)+datetime.timedelta(days=i-1)
+            bc_pd[date] = line.split(',')[1]
+            bc_pt[date] = line.split(',')[2]
+
+for date in date_list:
+    if date in dict_by_date and date in bc_pd:
+        dict_by_date[date]['BC']['pd'] = bc_pd[date]
+        dict_by_date[date]['BC']['pt'] = bc_pt[date]
+
+    if date in viri_by_date and date in bc_pd:
+        viri_by_date[date]['BC-pd'] = bc_pd[date]
+        viri_by_date[date]['BC-pt'] = bc_pt[date]
+
+# read in any hospital admission data available (BC, Manitoba, Quebec only)
 
 hd_by_prov = {}
 id_by_prov = {}
 
+# BC (from Jens)
+prov = 'BC'
+hd_by_date = {}
+prev_date = None
+prev_cumul = 0
+with open('bc_total_hospitalizations.csv') as f:
+    for i, line in enumerate(f):
+        if i > 0:
+            fields = line.split(',')
+            df = fields[0].split(' ')[0].split('-')
+            date = datetime.date(int(df[0]), int(df[1]), int(df[2]))
+            ha = fields[1]
+            if ha == 'BC':
+                cumul = int(fields[2])
+                new_admissions = cumul - prev_cumul
+                if new_admissions > 0:
+                    if prev_date is not None:
+                        n_day = (date-prev_date).days
+                        if n_day == 1:
+                            hd_by_date[date] = max(0,new_admissions)
+                        else:
+                            nominal = int((new_admissions - new_admissions % n_day)/n_day)
+                            for i_day in range(n_day):
+                                back_day = date - datetime.timedelta(days = i_day)
+                                extra = 0
+                                if i_day < new_admissions % n_day:
+                                    extra = 1
+                                hd_by_date[back_day] = nominal + extra
+
+                    prev_date = date
+                    prev_cumul = cumul
+
+hd_by_prov[prov] = hd_by_date
+
+# Quebec
 prov = 'QC'
 hd_by_date = {}
 id_by_date = {}
