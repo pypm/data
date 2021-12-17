@@ -97,7 +97,7 @@ def get_data_description():
             population_data = {'total': pop_data_total}
             populations_data[population] = population_data
 
-        f0_populations = ['hospitalized']
+        f0_populations = ['hospitalized','icu admissions']
         filename = filenames[0]
         for population in f0_populations:
             pop_data_daily = {}
@@ -106,6 +106,8 @@ def get_data_description():
 
             if population == 'hospitalized':
                 header = regional_abbreviations[region] + '-hd'
+            if population == 'icu admissions':
+                header = regional_abbreviations[region] + '-id'
 
             pop_data_daily['header'] = header
 

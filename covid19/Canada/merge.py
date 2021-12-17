@@ -19,48 +19,47 @@ provs = ['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK',
 
 # read in old virihealth data
 
-v_provs = ['ON','BC','QC','AB','SK','NS','MB','NB','NL','PE','YT','NT','NU']
-v_datums = [['pd','pt'],['dd','dt']]
+v_provs = ['ON', 'BC', 'QC', 'AB', 'SK', 'NS', 'MB', 'NB', 'NL', 'PE', 'YT', 'NT', 'NU']
+v_datums = [['pd', 'pt'], ['dd', 'dt']]
 viri_by_date = {}
 
-i=0
-v_date = datetime.date(2020,3,1)
+i = 0
+v_date = datetime.date(2020, 3, 1)
 with open('CV-TR.csv') as f:
     for line in f:
         cols = line.strip().split(',')
-        if i>0:
+        if i > 0:
             icol = 1
             viri_dict = {}
             for v_datum in v_datums:
                 for v_prov in v_provs:
                     for v_dat in v_datum:
-                        viri_dict[v_prov+'-'+v_dat] = cols[icol]
+                        viri_dict[v_prov + '-' + v_dat] = cols[icol]
                         icol += 1
             viri_by_date[v_date] = viri_dict
             v_date += datetime.timedelta(days=1)
-        i+=1
+        i += 1
 
-
-v_provs2 = ['AB','SK','BC','NS','ON','MB','QC','NB','NL']
-v_datums2 = [['ht','it']]
+v_provs2 = ['AB', 'SK', 'BC', 'NS', 'ON', 'MB', 'QC', 'NB', 'NL']
+v_datums2 = [['ht', 'it']]
 viri_by_date2 = {}
 
-i=0
-v_date = datetime.date(2020,3,1)
+i = 0
+v_date = datetime.date(2020, 3, 1)
 with open('CV - H.csv') as f:
     for line in f:
         cols = line.strip().split(',')
-        if i>0:
+        if i > 0:
             icol = 1
             viri_dict = {}
             for v_datum in v_datums2:
                 for v_prov in v_provs2:
                     for v_dat in v_datum:
-                        viri_dict[v_prov+'-'+v_dat] = cols[icol]
+                        viri_dict[v_prov + '-' + v_dat] = cols[icol]
                         icol += 1
             viri_by_date2[v_date] = viri_dict
             v_date += datetime.timedelta(days=1)
-        i+=1
+        i += 1
 
 # Read in esri data
 
@@ -107,15 +106,39 @@ datums = []
 for key in col_d:
     datums.append(col_d[key])
 
+# read in any hospital admission data (Quebec only)
+
+hd_by_prov = {}
+id_by_prov = {}
+
+prov = 'QC'
+hd_by_date = {}
+id_by_date = {}
+with open('graph_3-2_page_principale.csv') as f:
+    for i, line in enumerate(f):
+        if i > 0:
+            fields = line.split(',')
+            df = fields[0].split(' ')[0].split('-')
+            date = datetime.date(int(df[0][1:]), int(df[1]), int(df[2]))
+            nih = int(fields[1])
+            icu = int(fields[2])
+            hd_by_date[date] = nih+icu
+            id_by_date[date] = icu
+hd_by_prov[prov] = hd_by_date
+id_by_prov[prov] = id_by_date
+
 start_date = datetime.date(2020, 3, 1)
-esri_date = datetime.date(2020,4,26)
+esri_date = datetime.date(2020, 4, 26)
 with open('ca-pypm.csv', 'w') as the_file:
     #    the_file.write('Hello\n')
 
     hbuff = ['date']
     for prov in provs:
-        hbuff.append(prov+'-pd')
+        hbuff.append(prov + '-pd')
         for dat in datums:
+            hbuff.append(prov + '-' + dat)
+    for prov in provs:
+        for dat in ['hd','id']:
             hbuff.append(prov + '-' + dat)
     the_file.write(','.join(hbuff) + '\n')
 
@@ -125,7 +148,7 @@ with open('ca-pypm.csv', 'w') as the_file:
         dict_by_prov = dict_by_date[date]
         if date >= start_date:
             buff = [str(date)]
-            if (date-esri_date).days >= 0:
+            if (date - esri_date).days >= 0:
                 for prov in provs:
                     dict_by_datum = None
                     pd_val = ''
@@ -142,15 +165,26 @@ with open('ca-pypm.csv', 'w') as the_file:
                         buff.append(val)
             else:
                 for prov in provs:
-                    dat='pd'
-                    buff.append(viri_by_date[date][prov+'-pd'])
+                    dat = 'pd'
+                    buff.append(viri_by_date[date][prov + '-pd'])
                     for dat in datums:
-                        key = prov+'-'+dat
+                        key = prov + '-' + dat
                         if key in viri_by_date[date]:
                             buff.append(viri_by_date[date][key])
                         elif key in viri_by_date2[date]:
                             buff.append(viri_by_date2[date][key])
                         else:
                             buff.append('')
+            for prov in provs:
+                if prov in hd_by_prov and date in hd_by_prov[prov]:
+                    buff.append(str(hd_by_prov[prov][date]))
+                else:
+                    buff.append('')
+
+                if prov in id_by_prov and date in id_by_prov[prov]:
+                    buff.append(str(id_by_prov[prov][date]))
+                else:
+                    buff.append('')
+
             the_file.write(','.join(buff) + '\n')
         last_dict_by_prov = dict_by_prov
