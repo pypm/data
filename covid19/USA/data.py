@@ -11,13 +11,14 @@ def get_data_description():
     data = {}
     data['nation'] = 'USA'
     data['description'] = 'US by state'
-    data['source'] = 'Covid tracking US, JHU CSSE, US HHS, US CDC, Google Open Data'
+    data['source'] = 'Covid tracking US, JHU CSSE, US HHS, US CDC, New York Times'
     data['source_url'] = 'https://covidtracking.com and https://github.com/CSSEGISandData/COVID-19'\
                          ' and https://healthdata.gov/dataset/'\
                          'covid-19-reported-patient-impact-and-hospital-capacity-state-timeseries'\
                          ' and https://data.cdc.gov/Laboratory-Surveillance/Nationwide-Commercial-Laboratory' \
                          '-Seroprevalence-Su/d2tw-32xv'\
-                         ' and https://github.com/GoogleCloudPlatform/covid-19-open-data'
+                         ' and https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv'\
+                         ' and https://data.cdc.gov/Vaccinations/COVID-19-Vaccination-Trends-in-the-United-States-N/rh2h-3yt2'
 
     # common regional abbreviations used in the data files
     regional_abbreviations = {
@@ -80,8 +81,9 @@ def get_data_description():
         }
 
     files_data = {}
-    filenames = ['usa-pypm.csv','usa-jhu-pypm.csv','usa-hhs-pypm.csv','usa-cdc-pypm.csv','usa-vacc-pypm.csv']
-    sources = ['covidtracking.com','JHU CSSE','US HHS','US CDC','Private']
+    # switch from jhu to nyt on Dec 27, 2021
+    filenames = ['usa-pypm.csv','usa-nyt-pypm.csv','usa-hhs-pypm.csv','usa-cdc-pypm.csv','usa-vacc-pypm.csv']
+    sources = ['covidtracking.com','New York Times','US HHS','US CDC','US CDC']
     for i,filename in enumerate(filenames):
         file_data = {}
         file_data['source'] = sources[i]
