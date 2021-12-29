@@ -165,6 +165,56 @@ with open('bc_total_hospitalizations.csv') as f:
 
 hd_by_prov[prov] = hd_by_date
 
+# Manitoba - also replace ESRI data by provincial data:
+# 'TotalCases': ['pt'], 'TotalDeaths': ['dt'], 'TotalHospitalized': ['ht'], 'TotalICU': ['it']
+prov = 'MB'
+hd_by_date = {}
+id_by_date = {}
+
+cases = {'header':'Cumulative_Cases', 'sym':'pt', 'column':None}
+deaths = {'header':'Total_Deaths', 'sym':'dt', 'column':None}
+hosp_admin = {'header':'New_IP_Admissions_Total', 'sym':'hd', 'column':None}
+hosp_occup = {'header':'Current_Hospitalizations___Tota', 'sym':'ht', 'column':None}
+icu_admin = {'header':'New_ICU_Admissions', 'sym':'id', 'column':None}
+icu_occup = {'header':'Current_ICU___Total', 'sym':'it', 'column':None}
+csv_data = [cases, deaths, hosp_admin, hosp_occup, icu_admin, icu_occup]
+date_data = {'header':'Date', 'sym':'', 'column':None}
+mb_data = csv_data+[date_data]
+
+with open('Manitoba_COVID-19_–_Daily_Cases_and_Hospitalizations_(historical).csv') as f:
+    for i, line in enumerate(f):
+        fields = line.split(',')
+        if i == 0:
+            for i_field, field in enumerate(fields):
+                for datum in mb_data:
+                    if datum['header'] == field:
+                        datum['column'] = i_field
+                        break
+        else:
+            raw_datetime = fields[date_data['column']]
+            raw_date = raw_datetime.split(' ')[0]
+            dd = raw_date.split('/')
+            if len(dd) == 3:
+                date = datetime.date(int(dd[0]), int(dd[1]), int(dd[2]))
+                if (date - datetime.date(2020,2,29)).days > 0:
+                    for datum in csv_data:
+                        sym = datum['sym']
+                        value = (fields[datum['column']]).strip()
+                        if sym in ['pt', 'dt', 'ht', 'it']:
+                            if date in dict_by_date:
+                                dict_by_date[date]['MB'][sym] = value
+
+                            if date in viri_by_date and date in bc_pd:
+                                viri_by_date[date]['MB-'+sym] = value
+
+                        elif sym == 'hd':
+                            hd_by_date[date] = value
+                        elif sym == 'id':
+                            id_by_date[date] = value
+
+hd_by_prov[prov] = hd_by_date
+id_by_prov[prov] = id_by_date
+
 # Quebec
 prov = 'QC'
 hd_by_date = {}
