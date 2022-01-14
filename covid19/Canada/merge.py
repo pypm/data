@@ -204,7 +204,7 @@ with open('Manitoba_COVID-19_–_Daily_Cases_and_Hospitalizations_(historical).c
                             if date in dict_by_date:
                                 dict_by_date[date]['MB'][sym] = value
 
-                            if date in viri_by_date and date in bc_pd:
+                            if date in viri_by_date:
                                 viri_by_date[date]['MB-'+sym] = value
 
                         elif sym == 'hd':
@@ -219,6 +219,7 @@ id_by_prov[prov] = id_by_date
 prov = 'QC'
 hd_by_date = {}
 id_by_date = {}
+# admission data
 with open('graph_3-2_page_principale.csv') as f:
     for i, line in enumerate(f):
         if i > 0:
@@ -231,6 +232,29 @@ with open('graph_3-2_page_principale.csv') as f:
             id_by_date[date] = icu
 hd_by_prov[prov] = hd_by_date
 id_by_prov[prov] = id_by_date
+# occupancy data
+with open('graph_3-1_page_principale.csv') as f:
+    for i, line in enumerate(f):
+        if i > 0:
+            fields = line.strip().split(',')
+            df = fields[0].split(' ')[0].split('-')
+            date = datetime.date(int(df[0][1:]), int(df[1]), int(df[2]))
+            if (date - datetime.date(2020, 2, 29)).days > 0:
+                nih = 0
+                if fields[1] != '':
+                    nih = int(fields[1])
+                icu = 0
+                if fields[2] != '':
+                    icu = int(fields[2])
+                hosp = nih + icu
+
+                if date in dict_by_date:
+                    dict_by_date[date]['QC']['it'] = str(icu)
+                    dict_by_date[date]['QC']['ht'] = str(hosp)
+
+                if date in viri_by_date:
+                    viri_by_date[date]['QC-it'] = str(icu)
+                    viri_by_date[date]['QC-ht'] = str(hosp)
 
 start_date = datetime.date(2020, 3, 1)
 esri_date = datetime.date(2020, 4, 26)
