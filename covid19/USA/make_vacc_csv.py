@@ -72,6 +72,7 @@ states = ['AK', 'AL', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA'
 
 n_days = 0
 vacc_by_state = {}
+booster_by_state = {}
 t0 = date(2020,3,1)
 last_date = '2020-03-01'
 
@@ -87,6 +88,7 @@ if i_vacc == 0:
             if i == 0:
                 header = line.split(',')
                 dose1_index = header.index('Admin_Dose_1_Cumulative')
+                booster_index = header.index('Booster_Cumulative')
                 type_index = header.index('date_type')
                 loc_index = header.index('Location')
             else:
@@ -100,7 +102,9 @@ if i_vacc == 0:
                         last_date = data_date
                     if state not in vacc_by_state:
                         vacc_by_state[state] = {}
+                        booster_by_state[state] = {}
                     vacc_by_state[state][data_date] = fields[dose1_index]
+                    booster_by_state[state][data_date] = fields[booster_index]
 
 elif i_vacc == 1:
 
@@ -127,7 +131,7 @@ with open('usa-vacc-pypm.csv', 'w') as the_file:
 
     hbuff = ['date']
     for state in states:
-        for dat in ['xt']:
+        for dat in ['xt','yt']:
             hbuff.append(state + '-' + dat)
     the_file.write(','.join(hbuff) + '\n')
 
@@ -137,14 +141,15 @@ with open('usa-vacc-pypm.csv', 'w') as the_file:
         date_str = the_date.isoformat()
         buff = [date_str]
         for state in states:
-            if date_str in vacc_by_state[state]:
-                val = vacc_by_state[state][date_str]
-                if val != '' and int(val) > 0:
-                    buff.append(vacc_by_state[state][date_str])
+            for data_by_state in [vacc_by_state, booster_by_state]:
+                if date_str in data_by_state[state]:
+                    val = data_by_state[state][date_str]
+                    if val != '' and int(val) > 0:
+                        buff.append(val)
+                    else:
+                        buff.append('')
                 else:
                     buff.append('')
-            else:
-                buff.append('')
 
         the_file.write(','.join(buff) + '\n')
         the_date += timedelta(days=1)
