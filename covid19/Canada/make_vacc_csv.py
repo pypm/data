@@ -27,6 +27,7 @@ states = ['BC','AB','SK','MB','ON','QC','NB','NL','NS','PE','YT','NT','NU']
 
 n_days = 0
 vacc_by_state = {}
+booster_by_state = {}
 t0 = date(2020,3,1)
 last_date = '2020-03-01'
 
@@ -41,6 +42,7 @@ if source == 'infobase':
                 state_index = header.index('prename')
                 date_index = header.index('week_end')
                 dose1_index = header.index('numtotal_atleast1dose')
+                booster_index = header.index('numtotal_additional')
                 age_index = header.index('age')
             else:
                 fields = line.split(',')
@@ -53,9 +55,15 @@ if source == 'infobase':
                                 last_date = data_date
                             if state not in vacc_by_state:
                                 vacc_by_state[state] = {}
+                                booster_by_state[state] = {}
                             if data_date not in vacc_by_state[state]:
                                 vacc_by_state[state][data_date] = 0
+                                booster_by_state[state][data_date] = 0
                             vacc_by_state[state][data_date] += int(fields[dose1_index])
+                            booster_val = 0
+                            if fields[booster_index] != '':
+                                booster_val = int(fields[booster_index])
+                            booster_by_state[state][data_date] += booster_val
 
 elif source == 'google':
     with open('../vaccinations.csv') as f:
@@ -81,7 +89,7 @@ with open('ca-vacc-pypm.csv', 'w') as the_file:
 
     hbuff = ['date']
     for state in states:
-        for dat in ['xt']:
+        for dat in ['xt','yt']:
             hbuff.append(state + '-' + dat)
     the_file.write(','.join(hbuff) + '\n')
 
@@ -93,19 +101,20 @@ with open('ca-vacc-pypm.csv', 'w') as the_file:
         date_str = the_date.isoformat()
         buff = [date_str]
         for state in states:
-            if date_str in vacc_by_state[state]:
-                val = str(vacc_by_state[state][date_str])
-            else:
-                val = ''
+            for data_by_state in [vacc_by_state, booster_by_state]:
+                if date_str in data_by_state[state]:
+                    val = str(data_by_state[state][date_str])
+                else:
+                    val = ''
 
-            if val != '' and int(val) > 0:
-                started[state] = True
-                buff.append(str(vacc_by_state[state][date_str]))
-            elif state in started:
-                # repeat value from previous line in current column
-                buff.append(previous_buff[len(buff)])
-            else:
-                buff.append('')
+                if val != '' and int(val) > 0:
+                    started[state] = True
+                    buff.append(str(data_by_state[state][date_str]))
+                elif state in started:
+                    # repeat value from previous line in current column
+                    buff.append(previous_buff[len(buff)])
+                else:
+                    buff.append('')
 
 
         the_file.write(','.join(buff) + '\n')

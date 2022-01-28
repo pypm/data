@@ -53,7 +53,7 @@ def get_data_description():
         populations_data = {}
 
         f0_populations = ['reported', 'deaths']
-        f1_populations = ['vaccinated']
+        f1_populations = ['vaccinated', 'boosted']
 
         filename = filenames[0]
         for population in f0_populations:
@@ -121,6 +121,8 @@ def get_data_description():
             header = ''
             if population == 'vaccinated':
                 header = regional_abbreviations[region] + '-xt'
+            if population == 'boosted':
+                header = regional_abbreviations[region] + '-yt'
 
             pop_data_total['header'] = header
 
