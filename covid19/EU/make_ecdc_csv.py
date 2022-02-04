@@ -138,6 +138,8 @@ for state in data_by_state:
 
 with open('eu-ecdc-pypm.csv', 'w') as the_file:
 
+    data_started = {}
+    previous_value = {}
     hbuff = ['date']
     for country in regional_abbreviations:
         state = regional_abbreviations[country]
@@ -150,8 +152,14 @@ with open('eu-ecdc-pypm.csv', 'w') as the_file:
         for country in regional_abbreviations:
             state = regional_abbreviations[country]
             value = ''
-            if state in data_by_state and the_date in data_by_state[state]:
-                value = str(data_by_state[state][the_date])
+            if state in data_by_state:
+                if the_date in data_by_state[state]:
+                    if state not in data_started:
+                        data_started[state] = True
+                    value = str(data_by_state[state][the_date])
+                    previous_value[state] = value
+                elif data_started[state]:
+                    value = previous_value[state]
             buff.append(value)
 
         the_file.write(','.join(buff) + '\n')
