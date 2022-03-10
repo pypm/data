@@ -187,7 +187,7 @@ def get_data_description():
             pop_data_total = {}
             pop_data_total['filename'] = filename
             header = ''
-            if population == 'infected':
+            if population == 'sero_positive':
                 header = regional_abbreviations[region] + '-nt'
 
             pop_data_total['header'] = header
