@@ -106,7 +106,7 @@ def get_data_description():
                       'ventilated', 'on_ventilator']
     f1_populations = ['reported', 'deaths']
     f2_populations = ['in_icu','hospitalized','in_hospital']
-    f3_populations = ['infected']
+    f3_populations = ['sero_positive']
     f4_populations = ['vaccinated','boosted']
 
     for region in regional_abbreviations:

@@ -110,7 +110,7 @@ with open('Nationwide_Commercial_Laboratory_Seroprevalence_Survey.csv') as f:
             cols_0 = groups[0].split(',')
             state = cols_0[0]
 
-            if state in states:
+            if state in states and len(groups) > 1:
                 cols_1 = groups[1].split(',')
                 if len(cols_1) == 2: # dates within one year
                     date_range = cols_1[0]
@@ -136,7 +136,7 @@ with open('Nationwide_Commercial_Laboratory_Seroprevalence_Survey.csv') as f:
                 start_day = (start-t0).days
                 end_day = (end-t0).days
 
-                infected = groups[2].split(',')[40]
+                infected = groups[2].split(',')[51]
                 if infected != '' and int(infected) != 0:
                     nt_data = {'start':start_day, 'end':end_day, 'infected':int(infected)}
 
