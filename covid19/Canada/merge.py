@@ -283,9 +283,10 @@ with open('ca-pypm.csv', 'w') as the_file:
                     pd_val = ''
                     if prov in dict_by_prov:
                         dict_by_datum = dict_by_prov[prov]
-                        last_dict_by_datum = last_dict_by_prov[prov]
-                        if last_dict_by_datum is not None:
-                            pd_val = int(dict_by_datum['pt']) - int(last_dict_by_datum['pt'])
+                        if prov in last_dict_by_prov:
+                            last_dict_by_datum = last_dict_by_prov[prov]
+                            if last_dict_by_datum is not None:
+                                pd_val = int(dict_by_datum['pt']) - int(last_dict_by_datum['pt'])
                     buff.append(str(pd_val))
                     for dat in datums:
                         val = ''
