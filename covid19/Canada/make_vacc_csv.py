@@ -33,6 +33,7 @@ last_date = '2020-03-01'
 
 source = 'infobase'
 # https://health-infobase.canada.ca/src/data/covidLive/vaccination-coverage-byAgeAndSex.csv
+# NOTE: to remove commas in column J, change format from general to number and back to general again
 
 if source == 'infobase':
     with open('vaccination-coverage-byAgeAndSex.csv') as f:
