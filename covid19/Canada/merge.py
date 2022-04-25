@@ -5,6 +5,7 @@ Created on Sun May  3 23:08:22 2020
 @author: karlen
 """
 import datetime
+import copy
 
 d_d = {'TotalCases': ['pt'],
        'TotalDeaths': ['dt'],
@@ -61,7 +62,7 @@ with open('CV - H.csv') as f:
             v_date += datetime.timedelta(days=1)
         i += 1
 
-# Read in esri data
+# Read in esri data (available as daily data through April 15, 2022)
 
 i = 0
 
@@ -105,6 +106,53 @@ if len(dict_by_prov) > 0:
 datums = []
 for key in col_d:
     datums.append(col_d[key])
+
+# Read in esri weekly data (starting after April 15, 2022): assume constant numbers each day
+# note that copy of dictionary is necessary - otherwise later changes are not unique per day
+
+weekly_date_col = 2
+weekly_hosp_col = None
+weekly_icu_col = None
+last_weekly_date = None
+dict_by_prov = {}
+with open('Provincial_Weekly_Totals_Eastern_Time.csv') as f:
+    for i,line in enumerate(f):
+        cols = line.strip().split(',')
+        if i == 0:
+            j = 0
+            for col in cols:
+                if col == 'TotalHospitalized':
+                    weekly_hosp_col = j
+                elif col == 'TotalICU':
+                    weekly_icu_col = j
+                j += 1
+        else:
+            prov = cols[1]
+            if prov in provs:
+                dt = cols[weekly_date_col].split(' ')
+                dd = dt[0].split('/')
+                date = datetime.date(int(dd[0]), int(dd[1]), int(dd[2]))
+                if last_weekly_date is not None and date > last_weekly_date:
+                    for iday in range(7):
+                        day_offset = -6+iday
+                        prev_date = date + datetime.timedelta(days = day_offset)
+                        dict_by_date[prev_date] = copy.deepcopy(dict_by_prov)
+                        date_list.append(prev_date)
+                    dict_by_prov = {}
+
+                if date > last_date:
+                    dict_by_datum = {}
+                    for datum,col in zip(['ht','it'],[weekly_hosp_col,weekly_icu_col]):
+                        dict_by_datum[datum] = str(cols[col])
+                    dict_by_prov[prov] = dict_by_datum
+                    last_weekly_date = date
+
+if len(dict_by_prov) > 0:
+    for iday in range(7):
+        day_offset = -6 + iday
+        prev_date = last_weekly_date + datetime.timedelta(days=day_offset)
+        dict_by_date[prev_date] = copy.deepcopy(dict_by_prov)
+        date_list.append(prev_date)
 
 # replace BC data with provincial data source
 
@@ -286,12 +334,14 @@ with open('ca-pypm.csv', 'w') as the_file:
                         if prov in last_dict_by_prov:
                             last_dict_by_datum = last_dict_by_prov[prov]
                             if last_dict_by_datum is not None:
-                                pd_val = int(dict_by_datum['pt']) - int(last_dict_by_datum['pt'])
+                                if 'pt' in dict_by_datum and 'pt' in last_dict_by_datum:
+                                    pd_val = int(dict_by_datum['pt']) - int(last_dict_by_datum['pt'])
                     buff.append(str(pd_val))
                     for dat in datums:
                         val = ''
                         if dict_by_datum is not None:
-                            val = dict_by_datum[dat]
+                            if dat in dict_by_datum:
+                                val = dict_by_datum[dat]
                         buff.append(val)
             else:
                 for prov in provs:
