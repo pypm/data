@@ -82,9 +82,13 @@ def get_data_description():
 
     files_data = {}
     # switch from jhu to nyt on Dec 27, 2021
-    filenames = ['usa-pypm.csv','usa-nyt-pypm.csv','usa-hhs-pypm.csv','usa-cdc-pypm.csv','usa-vacc-pypm.csv',
-                 'usa-jhu-pypm.csv',]
-    sources = ['covidtracking.com','New York Times','US HHS','US CDC','US CDC','JHU']
+    # switched back to JHU on May 15, 2022
+    #filenames = ['usa-pypm.csv','usa-nyt-pypm.csv','usa-hhs-pypm.csv','usa-cdc-pypm.csv','usa-vacc-pypm.csv',
+    #             'usa-jhu-pypm.csv',]
+    filenames = ['usa-pypm.csv','usa-jhu-pypm.csv','usa-hhs-pypm.csv','usa-cdc-pypm.csv','usa-vacc-pypm.csv',
+                 'usa-nyt-pypm.csv',]
+    #sources = ['covidtracking.com','New York Times','US HHS','US CDC','US CDC','JHU']
+    sources = ['covidtracking.com', 'JHU', 'US HHS', 'US CDC', 'US CDC', 'New York Times']
     for i,filename in enumerate(filenames):
         file_data = {}
         file_data['source'] = sources[i]
