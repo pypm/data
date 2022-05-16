@@ -115,7 +115,7 @@ weekly_hosp_col = None
 weekly_icu_col = None
 last_weekly_date = None
 dict_by_prov = {}
-with open('Provincial_Weekly_Totals_Eastern_Time.csv') as f:
+with open('Provincial_Weekly_Totals.csv') as f:
     for i,line in enumerate(f):
         cols = line.strip().split(',')
         if i == 0:
@@ -127,6 +127,8 @@ with open('Provincial_Weekly_Totals_Eastern_Time.csv') as f:
                     weekly_icu_col = j
                 j += 1
         else:
+            if cols[0] == '1665':
+                iiiii=1
             prov = cols[1]
             if prov in provs:
                 dt = cols[weekly_date_col].split(' ')
@@ -135,7 +137,7 @@ with open('Provincial_Weekly_Totals_Eastern_Time.csv') as f:
                 if last_weekly_date is not None and date > last_weekly_date:
                     for iday in range(7):
                         day_offset = -6+iday
-                        prev_date = date + datetime.timedelta(days = day_offset)
+                        prev_date = last_weekly_date + datetime.timedelta(days = day_offset)
                         dict_by_date[prev_date] = copy.deepcopy(dict_by_prov)
                         date_list.append(prev_date)
                     dict_by_prov = {}
