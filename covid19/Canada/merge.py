@@ -133,7 +133,10 @@ with open('Provincial_Weekly_Totals.csv') as f:
             if prov in provs:
                 dt = cols[weekly_date_col].split(' ')
                 dd = dt[0].split('/')
-                date = datetime.date(int(dd[0]), int(dd[1]), int(dd[2]))
+                # nominal date format
+                # date = datetime.date(int(dd[0]), int(dd[1]), int(dd[2]))
+                # chris north sent special file (July 9) with this date format
+                date = datetime.date(int(dd[2]), int(dd[0]), int(dd[1]))
                 if last_weekly_date is not None and date > last_weekly_date:
                     for iday in range(7):
                         day_offset = -6+iday
@@ -168,7 +171,7 @@ with open('../BC/bc-pypm.csv') as f:
             bc_pt[date] = line.split(',')[2]
 
 for date in date_list:
-    if date in dict_by_date and date in bc_pd:
+    if date in dict_by_date and 'BC' in dict_by_date[date] and date in bc_pd:
         dict_by_date[date]['BC']['pd'] = bc_pd[date]
         dict_by_date[date]['BC']['pt'] = bc_pt[date]
 
@@ -221,17 +224,17 @@ prov = 'MB'
 hd_by_date = {}
 id_by_date = {}
 
-cases = {'header':'Cumulative_Cases', 'sym':'pt', 'column':None}
-deaths = {'header':'Total_Deaths', 'sym':'dt', 'column':None}
-hosp_admin = {'header':'New_IP_Admissions_Total', 'sym':'hd', 'column':None}
-hosp_occup = {'header':'Current_Hospitalizations___Tota', 'sym':'ht', 'column':None}
-icu_admin = {'header':'New_ICU_Admissions', 'sym':'id', 'column':None}
-icu_occup = {'header':'Current_ICU___Total', 'sym':'it', 'column':None}
+cases = {'header':'"Cumulative Cases"', 'sym':'pt', 'column':None}
+deaths = {'header':'"Total Deaths"', 'sym':'dt', 'column':None}
+hosp_admin = {'header':'"New IP Admissions Total"', 'sym':'hd', 'column':None}
+hosp_occup = {'header':'"Current Hospitalizations - Total"', 'sym':'ht', 'column':None}
+icu_admin = {'header':'"New ICU Admissions"', 'sym':'id', 'column':None}
+icu_occup = {'header':'"Current ICU - Total"', 'sym':'it', 'column':None}
 csv_data = [cases, deaths, hosp_admin, hosp_occup, icu_admin, icu_occup]
-date_data = {'header':'Date', 'sym':'', 'column':None}
+date_data = {'header':'"Date"', 'sym':'', 'column':None}
 mb_data = csv_data+[date_data]
 
-with open('Manitoba_COVID-19_–_Daily_Cases_and_Hospitalizations_(historical).csv') as f:
+with open('mb_covid_cases_and_hospitalizations_daily.csv') as f:
     for i, line in enumerate(f):
         fields = line.split(',')
         if i == 0:
@@ -242,8 +245,8 @@ with open('Manitoba_COVID-19_–_Daily_Cases_and_Hospitalizations_(historical).c
                         break
         else:
             raw_datetime = fields[date_data['column']]
-            raw_date = raw_datetime.split(' ')[0]
-            dd = raw_date.split('/')
+            raw_date = raw_datetime.replace('"','')
+            dd = raw_date.split('-')
             if len(dd) == 3:
                 date = datetime.date(int(dd[0]), int(dd[1]), int(dd[2]))
                 if (date - datetime.date(2020,2,29)).days > 0:
@@ -251,7 +254,7 @@ with open('Manitoba_COVID-19_–_Daily_Cases_and_Hospitalizations_(historical).c
                         sym = datum['sym']
                         value = (fields[datum['column']]).strip()
                         if sym in ['pt', 'dt', 'ht', 'it']:
-                            if date in dict_by_date:
+                            if date in dict_by_date and 'MB' in dict_by_date[date]:
                                 dict_by_date[date]['MB'][sym] = value
 
                             if date in viri_by_date:
@@ -270,7 +273,7 @@ prov = 'QC'
 hd_by_date = {}
 id_by_date = {}
 # admission data
-with open('graph_3-2_page_principale.csv') as f:
+with open('graph_3-2_page_par_region.csv') as f:
     for i, line in enumerate(f):
         if i > 0:
             fields = line.split(',')
@@ -283,7 +286,7 @@ with open('graph_3-2_page_principale.csv') as f:
 hd_by_prov[prov] = hd_by_date
 id_by_prov[prov] = id_by_date
 # occupancy data
-with open('graph_3-1_page_principale.csv') as f:
+with open('graph_3-1_page_par_region.csv') as f:
     for i, line in enumerate(f):
         if i > 0:
             fields = line.strip().split(',')
@@ -298,7 +301,7 @@ with open('graph_3-1_page_principale.csv') as f:
                     icu = int(fields[2])
                 hosp = nih + icu
 
-                if date in dict_by_date:
+                if date in dict_by_date and 'QC' in dict_by_date[date]:
                     dict_by_date[date]['QC']['it'] = str(icu)
                     dict_by_date[date]['QC']['ht'] = str(hosp)
 
