@@ -134,9 +134,9 @@ with open('Provincial_Weekly_Totals.csv') as f:
                 dt = cols[weekly_date_col].split(' ')
                 dd = dt[0].split('/')
                 # nominal date format
-                # date = datetime.date(int(dd[0]), int(dd[1]), int(dd[2]))
+                date = datetime.date(int(dd[0]), int(dd[1]), int(dd[2]))
                 # chris north sent special file (July 9) with this date format
-                date = datetime.date(int(dd[2]), int(dd[0]), int(dd[1]))
+                # date = datetime.date(int(dd[2]), int(dd[0]), int(dd[1]))
                 if last_weekly_date is not None and date > last_weekly_date:
                     for iday in range(7):
                         day_offset = -6+iday
