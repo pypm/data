@@ -44,9 +44,14 @@ regional_abbreviations = {
     'United Kingdom': 'GB'
 }
 
-# Starting Nov 8, multiple sources: daily scraped.csv, daily non-eu, weekly for remaining
+# Starting Nov 8 2021, multiple sources: daily scraped.csv, daily non-eu, weekly for remaining
 data_by_state = {}
 last_date_by_state = {}
+
+# Starting Oct 9 2022, ECDC data stale, use OWID repo and UK data to continue updating data
+owid_start_date = datetime.date(2022, 9, 4)
+owid_states = ['BE', 'FR', 'IE', 'NO', 'CH']
+uk_start_date = datetime.date(2022, 9, 4)
 
 raw_files = ['scraped.csv','non-eu.csv']
 
@@ -87,6 +92,64 @@ for state in data_by_state:
 for state in bad_states:
     del data_by_state[state]
     del last_date_by_state[state]
+
+# use OWID data to fill in values, starting from owid_start_date
+# OWID is 7 day sum (typically updated daily) so that daily admissions can be extracted
+# Otherwise use weekly values to update
+
+owid_file = 'covid-hospitalizations.csv'
+
+last_state = ''
+last_date = ''
+seven_day_buffer = []
+with open(owid_file) as f:
+    for i, line in enumerate(f):
+        if i > 0:
+            fields = line.strip().split(',')
+            if fields[3] == 'Weekly new hospital admissions':
+                country = fields[0]
+                if country in regional_abbreviations:
+                    state = regional_abbreviations[country]
+                    if state != last_state:
+                        seven_day_buffer = []
+                    last_state = state
+                    if state in owid_states:
+                        df = fields[2].split('-')
+                        record_date = datetime.date(int(df[0]), int(df[1]), int(df[2]))
+                        if record_date == owid_start_date:
+                            last_date = record_date
+                            seven_day_buffer = []
+                            for day_offset in range(-6,1,1):
+                                date = record_date + timedelta(days=day_offset)
+                                value = data_by_state[state][date]
+                                seven_day_buffer.append(value)
+                        elif record_date > owid_start_date:
+                            value = int(float(fields[4]))
+                            if (record_date-last_date).days == 1:
+                                new_admin = value - int(np.sum(seven_day_buffer[1:]))
+                                data_by_state[state][record_date] = new_admin
+                                seven_day_buffer = seven_day_buffer[1:] + [new_admin]
+                                last_date = record_date
+                            else:
+                                if len(seven_day_buffer) == 0:
+                                    seven_day_buffer = []
+                                    for day_offset in range(-6, 1, 1):
+                                        date = record_date + timedelta(days=day_offset)
+                                        value = data_by_state[state][date]
+                                        seven_day_buffer.append(value)
+                                days = (record_date-last_date).days
+                                new_admin = value - np.sum(seven_day_buffer[days:])
+                                daily = int(new_admin / days)
+                                extra = new_admin % days
+                                for iday in range(days):
+                                    date = record_date - timedelta(days=iday)
+                                    data_by_state[state][date] = daily
+                                    if iday < extra:
+                                        data_by_state[state][date] += 1
+                                last_date = record_date
+
+                        if record_date > last_date_by_state[state]:
+                            last_date_by_state[state] = record_date
 
 # use weekly data for the rest: split across days of week
 ecdc_file = 'truth_ECDC-Incident Hospitalizations.csv'
