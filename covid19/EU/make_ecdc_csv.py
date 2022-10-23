@@ -83,7 +83,7 @@ bad_states = []
 for state in data_by_state:
     print(state, last_date_by_state[state])
     #if raw data is out of date, do not use it
-    if (datetime.date.today()-last_date_by_state[state]).days > 30:
+    if (datetime.date.today()-last_date_by_state[state]).days > 60:
         print(state,' ** raw data not used ** too old')
         bad_states.append(state)
     else:
