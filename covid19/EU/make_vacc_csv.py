@@ -105,14 +105,18 @@ elif vacc_data == 'ecdc':
     epiweek1 = {'2022':date(2022,1,2)}
     for state in vacc_by_state_week:
         vacc_by_state[state] = {}
-        for yearweek in vacc_by_state_week[state]:
+        cumul_vacc = 0
+        yearweeks = list(vacc_by_state_week[state].keys())
+        yearweeks.sort()
+        for yearweek in yearweeks:
             year = yearweek.split('-')[0]
             week = int(yearweek.split('W')[1])
             start_day = epiweek1[year] + timedelta(days=7*(week-1))
-            daily = str(int(vacc_by_state_week[state][yearweek]/7))
+            daily = int(vacc_by_state_week[state][yearweek]/7)
             for day in range(7):
                 date_str = (start_day+timedelta(days=day)).isoformat()
-                vacc_by_state[state][date_str] = daily
+                cumul_vacc += daily
+                vacc_by_state[state][date_str] = str(cumul_vacc)
                 if date_str > last_date:
                     last_date = date_str
 
