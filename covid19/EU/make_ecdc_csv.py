@@ -54,28 +54,31 @@ owid_states = ['BE', 'FR', 'IE', 'NO', 'CH']
 uk_start_date = datetime.date(2022, 9, 4)
 
 raw_files = ['scraped.csv','non-eu.csv']
+date_fields = [3,2]
+value_fields = [4,3]
 
 record_date = None
-for raw_file in raw_files:
+for j,raw_file in enumerate(raw_files):
     with open(raw_file) as f:
         for i,line in enumerate(f):
             if i > 0:
                 fields = line.split(',')
-                df = fields[2].split('-')
-                record_date = datetime.date(int(df[0]),int(df[1]),int(df[2]))
-                state = fields[1]
-                value = int(fields[3])
+                if j>0 or fields[2] == 'New_Hospitalised':
+                    df = fields[date_fields[j]].split('-')
+                    record_date = datetime.date(int(df[0]),int(df[1]),int(df[2]))
+                    state = fields[1]
+                    value = int(fields[value_fields[j]])
 
-                if state not in data_by_state:
-                    data_by_state[state] = {}
-                    data_by_state[state][t0] = 0
-                    last_date_by_state[state] = t0
-                if record_date <= t0:
-                    data_by_state[state][t0] += value
-                else:
-                    data_by_state[state][record_date] = value
-                if record_date > last_date_by_state[state]:
-                    last_date_by_state[state] = record_date
+                    if state not in data_by_state:
+                        data_by_state[state] = {}
+                        data_by_state[state][t0] = 0
+                        last_date_by_state[state] = t0
+                    if record_date <= t0:
+                        data_by_state[state][t0] += value
+                    else:
+                        data_by_state[state][record_date] = value
+                    if record_date > last_date_by_state[state]:
+                        last_date_by_state[state] = record_date
 
 print('Daily hospitalization data taken in scraped.csv and non-eu.csv up to (last date):')
 raw_states = []
@@ -83,7 +86,7 @@ bad_states = []
 for state in data_by_state:
     print(state, last_date_by_state[state])
     #if raw data is out of date, do not use it
-    if (datetime.date.today()-last_date_by_state[state]).days > 60:
+    if (datetime.date.today()-last_date_by_state[state]).days > 90:
         print(state,' ** raw data not used ** too old')
         bad_states.append(state)
     else:
