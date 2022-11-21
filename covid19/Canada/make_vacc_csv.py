@@ -6,6 +6,8 @@
 import numpy as np
 import datetime
 from datetime import datetime, date, timedelta
+import pandas as pd
+import xlrd
 
 regional_abbreviations = {
         'British Columbia': 'BC',
@@ -31,11 +33,29 @@ booster_by_state = {}
 t0 = date(2020,3,1)
 last_date = '2020-03-01'
 
-source = 'infobase'
+#source = 'infobase'
 # https://health-infobase.canada.ca/src/data/covidLive/vaccination-coverage-byAgeAndSex.csv
 # NOTE: to remove commas in column J, change format from general to number and back to general again
 
-if source == 'infobase':
+source = 'covid19tracker'
+
+if source == 'covid19tracker':
+    workbook = xlrd.open_workbook_xls('COVID19Tracker.ca Data.xls', ignore_workbook_corruption=True)
+    tracker = pd.read_excel(workbook, sheet_name=None)
+    for state in states:
+        df_state = tracker[state]
+        datetimes = df_state['data » date'].values
+        dates = [pd.Timestamp(datetime).date().isoformat() for datetime in datetimes]
+        vaccinations = df_state['data » total_vaccinations'].values
+        vacc_by_state[state] = {}
+        booster_by_state[state] = {}
+        for the_date,vacc in zip(dates,vaccinations):
+            vacc_by_state[state][the_date]=vacc
+            booster_by_state[state][the_date]=0
+            if the_date > last_date:
+                last_date = the_date
+
+elif source == 'infobase':
     with open('vaccination-coverage-byAgeAndSex.csv') as f:
         for i, line in enumerate(f):
             if i == 0:
