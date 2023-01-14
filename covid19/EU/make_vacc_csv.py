@@ -102,7 +102,7 @@ elif vacc_data == 'ecdc':
                             doses = int(fields[dose_index])
                             vacc_by_state_week[state][yearweek] += doses
 
-    epiweek1 = {'2022':date(2022,1,2)}
+    epiweek1 = {'2022':date(2022,1,2),'2023':date(2023,1,1)}
     for state in vacc_by_state_week:
         vacc_by_state[state] = {}
         cumul_vacc = 0
