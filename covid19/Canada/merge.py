@@ -273,7 +273,7 @@ prov = 'QC'
 hd_by_date = {}
 id_by_date = {}
 # admission data
-with open('graph_3-2_page_par_region.csv') as f:
+with open('graph_3-2_page_par_region-archive.csv') as f:
     for i, line in enumerate(f):
         if i > 0:
             fields = line.split(',')
@@ -281,6 +281,17 @@ with open('graph_3-2_page_par_region.csv') as f:
             date = datetime.date(int(df[0][1:]), int(df[1]), int(df[2]))
             nih = int(fields[1])
             icu = int(fields[2])
+            hd_by_date[date] = nih+icu
+            id_by_date[date] = icu
+# new admission data format - starting Jan 19 2023, backfilled to Jan 2 2022 (split due to- and with- COVID)
+with open('graph_3-2_page_par_region.csv') as f:
+    for i, line in enumerate(f):
+        if i > 0:
+            fields = line.split(',')
+            df = fields[0].split(' ')[0].split('-')
+            date = datetime.date(int(df[0][1:]), int(df[1]), int(df[2]))
+            nih = int(fields[1])+int(fields[3])
+            icu = int(fields[2])+int(fields[4])
             hd_by_date[date] = nih+icu
             id_by_date[date] = icu
 hd_by_prov[prov] = hd_by_date
